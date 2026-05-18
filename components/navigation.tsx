@@ -66,7 +66,7 @@ export default function Navigation() {
   };
 
   const navLinks = [
-    { href: '/events', label: 'Explore' },
+    { href: '/', label: 'Explore' },
     { href: '/marketplace', label: 'Marketplace' },
     { href: '/organizer', label: 'Sell Tickets' },
     { href: '/support', label: 'Help' },
@@ -113,11 +113,28 @@ export default function Navigation() {
                     My Tickets
                   </Button>
                 </Link>
-                <Link href={userRole === 'organizer' ? "/organizer/dashboard" : "/dashboard"}>
-                  <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-widest text-xs px-6 rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95">
-                    Dashboard
-                  </Button>
-                </Link>
+                
+                {userRole === 'organizer' ? (
+                  <div className="flex items-center gap-2">
+                    <Link href="/dashboard">
+                      <Button variant="outline" size="sm" className="font-bold uppercase tracking-widest text-xs px-4 rounded-full">
+                        Attendee Hub
+                      </Button>
+                    </Link>
+                    <Link href="/organizer/dashboard">
+                      <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-widest text-xs px-6 rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95">
+                        Organizer Hub
+                      </Button>
+                    </Link>
+                  </div>
+                ) : (
+                  <Link href="/dashboard">
+                    <Button className="bg-primary hover:bg-primary/90 text-primary-foreground font-black uppercase tracking-widest text-xs px-6 rounded-full shadow-lg shadow-primary/20 transition-all hover:scale-105 active:scale-95">
+                      Dashboard
+                    </Button>
+                  </Link>
+                )}
+                
                 <Button variant="ghost" size="icon" onClick={handleSignOut} className="text-muted-foreground hover:text-destructive transition-colors">
                   <LogOutIcon className="w-5 h-5" />
                 </Button>
@@ -198,11 +215,28 @@ export default function Navigation() {
                             <TicketIcon className="w-5 h-5 text-primary" />
                           </Button>
                         </Link>
-                        <Link href={userRole === 'organizer' ? "/organizer/dashboard" : "/dashboard"} className="block" onClick={() => setIsOpen(false)}>
-                          <Button className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black uppercase tracking-widest text-sm shadow-lg shadow-primary/20">
-                            Dashboard
-                          </Button>
-                        </Link>
+                        
+                        {userRole === 'organizer' ? (
+                          <>
+                            <Link href="/dashboard" className="block" onClick={() => setIsOpen(false)}>
+                              <Button variant="outline" className="w-full h-14 rounded-2xl font-bold uppercase tracking-widest text-sm border-primary/20 hover:bg-primary/5">
+                                Attendee Dashboard
+                              </Button>
+                            </Link>
+                            <Link href="/organizer/dashboard" className="block" onClick={() => setIsOpen(false)}>
+                              <Button className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black uppercase tracking-widest text-sm shadow-lg shadow-primary/20">
+                                Organizer Dashboard
+                              </Button>
+                            </Link>
+                          </>
+                        ) : (
+                          <Link href="/dashboard" className="block" onClick={() => setIsOpen(false)}>
+                            <Button className="w-full h-14 rounded-2xl bg-primary text-primary-foreground font-black uppercase tracking-widest text-sm shadow-lg shadow-primary/20">
+                              Dashboard
+                            </Button>
+                          </Link>
+                        )}
+
                         <Button 
                           variant="ghost" 
                           className="w-full h-14 rounded-2xl font-bold uppercase tracking-widest text-sm text-destructive hover:bg-destructive/5 hover:text-destructive"

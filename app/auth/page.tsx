@@ -48,13 +48,25 @@ function AuthContent() {
         await updateProfile(user, { displayName: fullName });
 
         // Store user profile data in Firestore
-        await setDoc(doc(db, 'users', user.uid), {
-          uid: user.uid,
-          fullName,
-          email,
-          role,
-          createdAt: new Date().toISOString(),
-        });
+        try {
+          // Fire and forget or timeout to prevent hanging on flaky connections
+          const setDocPromise = setDoc(doc(db, 'users', user.uid), {
+            uid: user.uid,
+            fullName,
+            email,
+            role,
+            createdAt: new Date().toISOString(),
+          });
+          
+          // Wait at most 3 seconds for Firestore to acknowledge, otherwise proceed anyway
+          await Promise.race([
+            setDocPromise,
+            new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
+          ]);
+        } catch (e) {
+          console.warn('Firestore write delayed or offline, proceeding to dashboard anyway.');
+        }
+
         if (redirectPath) {
           router.push(redirectPath);
         } else {

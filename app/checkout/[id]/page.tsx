@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -20,11 +20,16 @@ interface Event {
   price: number;
 }
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const params = useParams();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const eventId = params.id as string;
   const { user, loading: authLoading } = useAuth();
+  
+  const qty = parseInt(searchParams.get('qty') || '1');
+  const tier = searchParams.get('tier') || 'Regular';
+  const transport = searchParams.get('transport') || '';
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -120,6 +125,12 @@ export default function CheckoutPage() {
       </div>
     );
   }
+
+  const basePrice = event?.price || 0;
+  const unitPrice = tier === 'VIP' ? basePrice * 2 : basePrice;
+  const totalPrice = unitPrice * qty;
+  const transportCost = transport === 'round-trip' ? 1500 * qty : 0;
+  const finalPrice = totalPrice + transportCost;
 
   return (
     <>
@@ -349,12 +360,18 @@ export default function CheckoutPage() {
               <div className="space-y-4 pb-4 border-b border-border">
                 <div>
                   <p className="text-sm text-muted-foreground">{event?.title || 'Loading event...'}</p>
-                  <p className="text-sm font-semibold">1 Ticket × MWK {(event?.price || 0).toLocaleString()}</p>
+                  <p className="text-sm font-semibold">{qty} {tier === 'VIP' ? 'VIP Ticket' : 'Ticket'}{qty !== 1 ? 's' : ''} × MWK {unitPrice.toLocaleString()}</p>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>MWK {(event?.price || 0).toLocaleString()}</span>
+                  <span>MWK {totalPrice.toLocaleString()}</span>
                 </div>
+                {transport === 'round-trip' && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Transport</span>
+                    <span>MWK {transportCost.toLocaleString()}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Processing Fee</span>
                   <span>MWK 500</span>
@@ -363,7 +380,7 @@ export default function CheckoutPage() {
 
               <div className="flex justify-between font-bold text-lg mt-4">
                 <span>Total</span>
-                <span className="text-primary">MWK {((event?.price || 0) + 500).toLocaleString()}</span>
+                <span className="text-primary">MWK {(finalPrice + 500).toLocaleString()}</span>
               </div>
 
               <div className="mt-6 p-4 bg-background rounded-lg flex gap-3">
@@ -377,5 +394,20 @@ export default function CheckoutPage() {
         </div>
       </div>
     </>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center py-24">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary/30 border-t-primary rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-muted-foreground">Loading checkout...</p>
+        </div>
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   );
 }

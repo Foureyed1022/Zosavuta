@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertCircle, CalendarIcon, MapPinIcon, Crown, Sparkles, ShieldCheck, User, Star, TagIcon, InfoIcon } from 'lucide-react';
+import { AlertCircle, CalendarIcon, MapPinIcon, Crown, Sparkles, ShieldCheck, User, Star, TagIcon, InfoIcon, TicketIcon } from 'lucide-react';
 import { DEMO_BOOKINGS, DEMO_EVENTS } from '@/lib/mock-data';
 import { useAuth } from '@/hooks/use-auth';
 import { 
@@ -283,25 +283,18 @@ function BookingCard({
   if (booking.tier === 'VIP' || booking.tier?.toUpperCase() === 'VIP') {
     return (
       <div className="py-6">
-        <div className="max-w-md mx-auto bg-gradient-to-b from-slate-950 via-zinc-900 to-black rounded-[36px] border-2 border-amber-500/50 shadow-[0_0_50px_rgba(245,158,11,0.25)] text-white overflow-hidden relative group hover:border-amber-400 hover:shadow-[0_0_60px_rgba(245,158,11,0.4)] transition-all duration-700">
+        <div className="max-w-[320px] mx-auto bg-gradient-to-b from-slate-950 via-zinc-900 to-black rounded-[24px] border-2 border-amber-500/50 shadow-[0_0_40px_rgba(245,158,11,0.2)] text-white overflow-hidden relative group transition-all duration-700">
           {/* Holographic / Metallic background glow */}
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/20 via-transparent to-transparent pointer-events-none" />
-          <div className="absolute -top-24 -right-24 w-48 h-48 bg-amber-500/20 rounded-full blur-3xl group-hover:bg-amber-500/30 transition-all duration-700 pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-500/15 via-transparent to-transparent pointer-events-none" />
           
           {/* Exclusive VIP Branding Banner */}
-          <div className="bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 text-black py-2.5 px-6 font-black uppercase tracking-[0.3em] text-xs flex items-center justify-between shadow-lg shadow-amber-500/20 relative z-10">
-            <div className="flex items-center gap-1.5 font-extrabold">
-              <Crown className="w-4 h-4 fill-black" />
-              <span>ELITE VIP ACCESS</span>
-            </div>
-            <div className="flex items-center gap-1">
-              <Sparkles className="w-3.5 h-3.5" />
-              <span className="text-[10px] bg-black text-amber-300 px-2.5 py-0.5 rounded-full tracking-widest font-bold">ALL ACCESS</span>
-            </div>
+          <div className="bg-gradient-to-r from-amber-600 via-amber-400 to-amber-600 text-black py-2 px-5 font-black uppercase tracking-[0.3em] text-[10px] flex items-center justify-between shadow-lg shadow-amber-500/20 relative z-10">
+            <div>ELITE VIP</div>
+            <div className="text-[8px] bg-black text-amber-300 px-2 py-0.5 rounded-full tracking-[0.2em] font-bold">ALL ACCESS</div>
           </div>
 
           {/* Event Artwork Header (Vertical layout top) */}
-          <div className="relative h-64 w-full overflow-hidden">
+          <div className="relative h-48 w-full overflow-hidden">
             <img
               src={booking.eventImage}
               alt={booking.eventTitle}
@@ -310,135 +303,120 @@ function BookingCard({
             <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent" />
             
             {/* Status Badge */}
-            <div className="absolute top-4 left-4 z-10">
-              <span className={`px-3 py-1.5 rounded-full text-xs font-black tracking-wider uppercase ${booking.status === 'confirmed' ? 'bg-amber-400 text-black shadow-lg shadow-amber-400/30 font-extrabold' : 'bg-zinc-800 text-zinc-300'}`}>
+            <div className="absolute top-3 left-3 z-10">
+              <span className={`px-2.5 py-1 rounded-full text-[9px] font-black tracking-wider uppercase ${booking.status === 'confirmed' ? 'bg-amber-400 text-black shadow-lg shadow-amber-400/30' : 'bg-zinc-800 text-zinc-300'}`}>
                 {booking.status}
               </span>
             </div>
 
-            {/* Resale Listed Badge */}
-            {booking.isListed && (
-              <div className="absolute top-4 right-4 z-10">
-                <span className="px-3 py-1.5 rounded-full text-xs font-black tracking-widest uppercase bg-orange-600 text-white flex items-center gap-1.5 shadow-lg shadow-orange-600/40 animate-pulse font-extrabold">
-                  <TagIcon className="w-3.5 h-3.5" />
-                  Listed for Resale
-                </span>
-              </div>
-            )}
-
             {/* Event Title over image */}
-            <div className="absolute bottom-4 left-6 right-6 z-10">
-              <p className="text-amber-400 font-black tracking-widest text-xs uppercase mb-1 flex items-center gap-1.5">
-                <Star className="w-3.5 h-3.5 fill-amber-400" /> Premium Live Experience
+            <div className="absolute bottom-3 left-5 right-5 z-10">
+              <p className="text-amber-400 font-bold tracking-[0.2em] text-[8px] uppercase mb-1">
+                Premium Live Experience
               </p>
-              <h2 className="text-3xl font-black uppercase tracking-tight text-white leading-tight drop-shadow-md">
+              <h2 className="text-2xl font-black uppercase tracking-tight text-white leading-tight drop-shadow-md">
                 {booking.eventTitle}
               </h2>
             </div>
           </div>
 
           {/* Card Body - Attendee, Date, Venue, Tier info */}
-          <div className="p-8 space-y-6 relative z-10">
-            <div className="grid grid-cols-2 gap-4 pb-6 border-b border-zinc-800/80">
+          <div className="p-6 space-y-5 relative z-10">
+            <div className="grid grid-cols-2 gap-3 pb-5 border-b border-zinc-800/80">
               <div>
-                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Attendee / Holder</p>
-                <p className="text-lg font-black text-white uppercase tracking-wide flex items-center gap-2">
-                  <User className="w-4 h-4 text-amber-400 flex-shrink-0" />
-                  <span className="truncate">{booking.firstName ? `${booking.firstName} ${booking.lastName}` : 'VIP Guest'}</span>
+                <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Attendee</p>
+                <p className="text-sm font-black text-white uppercase tracking-wider truncate">
+                  {booking.firstName ? `${booking.firstName} ${booking.lastName}` : 'VIP Guest'}
                 </p>
               </div>
               <div>
-                <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest mb-1">Ticket Tier</p>
-                <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 font-extrabold text-sm uppercase tracking-wider shadow-inner">
-                  <Crown className="w-4 h-4" /> VIP PASS
+                <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Ticket Tier</p>
+                <div className="text-amber-400 font-black text-sm uppercase tracking-wider">
+                  VIP PASS
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4 pb-6 border-b border-zinc-800/80">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-amber-400 flex-shrink-0 shadow-inner">
-                  <CalendarIcon className="w-6 h-6" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Date & Time</p>
-                  <p className="text-base font-bold text-white">{formatDate(booking.eventDate)} • {booking.eventTime}</p>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center text-amber-400 flex-shrink-0 shadow-inner">
-                  <MapPinIcon className="w-6 h-6" />
-                </div>
-                <div>
-                  <p className="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Venue & City</p>
-                  <p className="text-base font-bold text-white">{booking.eventVenue}, {booking.eventLocation}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Pricing & Quantity Summary */}
-            <div className="bg-gradient-to-r from-zinc-900/90 to-zinc-900/60 p-4 rounded-2xl border border-zinc-800 flex items-center justify-between shadow-inner">
+            <div className="grid grid-cols-2 gap-3">
               <div>
-                <p className="text-xs text-zinc-400 font-medium">{booking.quantity} VIP Ticket{booking.quantity !== 1 ? 's' : ''} × MWK {booking.price.toLocaleString()}</p>
-                <p className="text-xl font-black text-amber-400 mt-0.5">Total: MWK {booking.totalAmount.toLocaleString()}</p>
+                <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Date & Time</p>
+                <p className="text-xs font-bold text-zinc-100">{formatDate(booking.eventDate)}</p>
+                <p className="text-xs font-bold text-zinc-100 mt-0.5">{booking.eventTime}</p>
+              </div>
+              <div>
+                <p className="text-[8px] font-bold text-zinc-500 uppercase tracking-widest mb-1">Venue</p>
+                <p className="text-xs font-bold text-zinc-100 truncate">{booking.eventVenue}</p>
+                <p className="text-xs font-bold text-zinc-100 truncate mt-0.5">{booking.eventLocation}</p>
+              </div>
+            </div>
+
+            {/* Pricing Summary */}
+            <div className="bg-gradient-to-r from-zinc-900/90 to-zinc-900/60 p-3 rounded-xl border border-zinc-800 flex items-center justify-between shadow-inner">
+              <div>
+                <p className="text-[10px] text-zinc-400 font-medium">{booking.quantity} Ticket{booking.quantity !== 1 ? 's' : ''}</p>
+                <p className="text-sm font-black text-amber-400 mt-0.5">MWK {booking.totalAmount.toLocaleString()}</p>
               </div>
               <div className="text-right">
-                <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500 block">Order Ref</span>
-                <span className="text-xs font-mono font-bold text-zinc-300">{booking.id}</span>
+                <span className="text-[8px] font-black uppercase tracking-widest text-zinc-500 block">Order Ref</span>
+                <span className="text-[10px] font-mono font-bold text-zinc-300">{booking.id}</span>
               </div>
             </div>
+          </div>
 
+          {/* Ticket Stub Perforation Line */}
+          <div className="relative">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 -ml-3 w-6 h-6 bg-background rounded-full border-r-2 border-amber-500/50" />
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 -mr-3 w-6 h-6 bg-background rounded-full border-l-2 border-amber-500/50" />
+            <div className="border-t-2 border-dashed border-zinc-700/50 mx-6" />
+          </div>
+
+          <div className="p-6 relative z-10">
             {/* Verification Barcode Section */}
-            <div className="pt-2 text-center space-y-3">
-              <div className="bg-white p-5 rounded-2xl max-w-[300px] mx-auto shadow-xl relative group-hover:shadow-[0_0_30px_rgba(255,255,255,0.2)] transition-shadow duration-500">
-                <div className="flex justify-between items-center mb-3 text-black">
-                  <div className="flex items-center gap-1 font-black text-[10px] tracking-widest uppercase text-amber-600">
-                    <ShieldCheck className="w-3.5 h-3.5" /> SECURE VIP VERIFICATION
+            <div className="text-center space-y-3">
+              <div className="bg-white p-4 rounded-xl shadow-xl relative transition-shadow duration-500">
+                <div className="flex justify-between items-center mb-2 text-black">
+                  <div className="font-black text-[8px] tracking-[0.2em] uppercase text-amber-600">
+                    VERIFICATION
                   </div>
-                  <span className="text-[9px] font-mono text-zinc-500 font-bold">SEC-99X</span>
+                  <span className="text-[8px] font-mono text-zinc-500 font-bold">SEC-99X</span>
                 </div>
                 
                 {/* Custom SVG Barcode */}
-                <div className="flex items-center justify-center py-2 border-y-2 border-dashed border-zinc-200 my-2 bg-zinc-50 rounded">
-                  <div className="flex gap-1 h-14 items-center justify-center w-full px-2">
+                <div className="flex items-center justify-center py-1.5 border-y border-dashed border-zinc-200 my-1.5 bg-zinc-50 rounded">
+                  <div className="flex gap-0.5 h-10 items-center justify-center w-full px-1">
+                    <div className="w-1 h-full bg-black"></div>
+                    <div className="w-2 h-full bg-black"></div>
+                    <div className="w-0.5 h-full bg-black"></div>
                     <div className="w-1.5 h-full bg-black"></div>
-                    <div className="w-3 h-full bg-black"></div>
                     <div className="w-1 h-full bg-black"></div>
                     <div className="w-2.5 h-full bg-black"></div>
-                    <div className="w-1.5 h-full bg-black"></div>
-                    <div className="w-4 h-full bg-black"></div>
-                    <div className="w-1 h-full bg-black"></div>
-                    <div className="w-2 h-full bg-black"></div>
-                    <div className="w-3 h-full bg-black"></div>
+                    <div className="w-0.5 h-full bg-black"></div>
                     <div className="w-1.5 h-full bg-black"></div>
                     <div className="w-2 h-full bg-black"></div>
                     <div className="w-1 h-full bg-black"></div>
-                    <div className="w-3.5 h-full bg-black"></div>
-                    <div className="w-1 h-full bg-black"></div>
+                    <div className="w-1.5 h-full bg-black"></div>
+                    <div className="w-0.5 h-full bg-black"></div>
                     <div className="w-2 h-full bg-black"></div>
+                    <div className="w-0.5 h-full bg-black"></div>
+                    <div className="w-1 h-full bg-black"></div>
                   </div>
                 </div>
-                <p className="text-[12px] font-mono font-black tracking-[0.3em] text-zinc-800 mt-2">
+                <p className="text-[10px] font-mono font-black tracking-[0.3em] text-zinc-800 mt-1.5">
                   {booking.ticketNumbers?.[0] || 'VIP-9990812'}
                 </p>
               </div>
-              <p className="text-[11px] text-zinc-400 font-medium italic">
-                Present barcode at the exclusive VIP fast-track entrance.
-              </p>
             </div>
 
             {/* Action Buttons for VIP Ticket */}
-            <div className="pt-4 border-t border-zinc-800/80 flex gap-3 flex-wrap">
-              <Button variant="outline" className="flex-1 bg-zinc-900 hover:bg-zinc-800 text-white border-zinc-700 hover:border-zinc-600 font-bold uppercase tracking-wider text-xs h-12">
+            <div className="pt-5 flex gap-2 flex-col">
+              <Button variant="outline" className="w-full bg-zinc-900 hover:bg-zinc-800 text-white border-zinc-700 hover:border-zinc-600 font-bold uppercase tracking-wider text-[10px] h-10">
                 Download Pass
               </Button>
               {!booking.isListed && isSoldOut && (
                 <Button 
                   onClick={() => setShowResaleDialog(true)}
-                  className="flex-1 bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black uppercase tracking-wider text-xs h-12 shadow-lg shadow-orange-600/30 border-none"
+                  className="w-full bg-gradient-to-r from-orange-600 to-amber-600 hover:from-orange-500 hover:to-amber-500 text-white font-black uppercase tracking-wider text-[10px] h-10 shadow-lg shadow-orange-600/30 border-none"
                 >
-                  <TagIcon className="w-4 h-4 mr-1.5" />
                   Resell Ticket
                 </Button>
               )}
@@ -451,136 +429,173 @@ function BookingCard({
   }
 
   return (
-    <Card className="overflow-hidden">
-      <div className="md:flex">
-        {/* Image */}
-        <div className="md:w-48 h-48 flex-shrink-0">
-          <img
-            src={booking.eventImage}
-            alt={booking.eventTitle}
-            className="w-full h-full object-cover"
-          />
+    <div className="relative group my-4">
+      {/* Regular Ticket Container */}
+      <div className="flex flex-col md:flex-row bg-card rounded-[24px] shadow-lg border border-border/50 overflow-hidden transition-all duration-300 hover:shadow-xl group-hover:border-primary/20">
+        
+        {/* Left Side: Event Details & Image */}
+        <div className="flex-1 flex flex-col sm:flex-row">
+          {/* Image */}
+          <div className="sm:w-48 h-48 sm:h-auto flex-shrink-0 relative">
+            <img
+              src={booking.eventImage}
+              alt={booking.eventTitle}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t sm:bg-gradient-to-r from-transparent to-black/20" />
+            
+            {/* Status Badge */}
+            <div className="absolute top-4 left-4 z-10">
+              <span className={`px-3 py-1 rounded-full text-[10px] font-black tracking-wider uppercase shadow-md ${
+                booking.status === 'confirmed' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
+              }`}>
+                {booking.status}
+              </span>
+            </div>
+          </div>
+
+          {/* Details */}
+          <div className="flex-1 p-6 flex flex-col justify-between bg-card relative">
+            {/* Subtle watermark */}
+            <div className="absolute top-4 right-4 opacity-5 pointer-events-none">
+              <TicketIcon className="w-24 h-24" />
+            </div>
+
+            <div>
+              <div className="flex items-start justify-between mb-4 relative z-10">
+                <div>
+                  <h3 className="text-2xl font-black tracking-tight text-foreground">{booking.eventTitle}</h3>
+                  <div className="flex gap-2 mt-2">
+                    {booking.isListed && (
+                      <span className="inline-flex px-3 py-1 rounded-full text-[10px] font-bold bg-orange-100 text-orange-800 items-center gap-1.5 uppercase tracking-widest shadow-sm">
+                        <TagIcon className="w-3 h-3" />
+                        Listed for Resale
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-4 text-sm text-muted-foreground mb-6 relative z-10">
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">Date & Time</p>
+                  <div className="flex items-center gap-2 font-semibold text-foreground">
+                    <CalendarIcon className="w-4 h-4 text-primary" />
+                    <span>{formatDate(booking.eventDate)} • {booking.eventTime}</span>
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70">Venue</p>
+                  <div className="flex items-center gap-2 font-semibold text-foreground truncate">
+                    <MapPinIcon className="w-4 h-4 text-primary" />
+                    <span className="truncate">{booking.eventLocation}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-4 bg-muted/50 p-3 rounded-xl border border-border/50 relative z-10 w-fit">
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Ticket Type</p>
+                  <p className="font-bold text-foreground capitalize">{booking.tier || 'Regular'} Admission</p>
+                </div>
+                <div className="w-px h-8 bg-border" />
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Quantity</p>
+                  <p className="font-bold text-foreground">{booking.quantity}</p>
+                </div>
+                <div className="w-px h-8 bg-border" />
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Total</p>
+                  <p className="font-black text-primary">MWK {booking.totalAmount.toLocaleString()}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-3 flex-wrap mt-6 relative z-10">
+              {status === 'confirmed' && (
+                <>
+                  <Button variant="outline" className="gap-2 h-10 rounded-xl font-bold text-xs uppercase tracking-wider">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
+                    Download
+                  </Button>
+                  {!booking.isListed && isSoldOut && (
+                    <Button 
+                      onClick={() => setShowResaleDialog(true)}
+                      variant="secondary" 
+                      className="gap-2 h-10 rounded-xl font-bold text-xs uppercase tracking-wider bg-orange-600 hover:bg-orange-700 text-white border-none shadow-md shadow-orange-600/20"
+                    >
+                      <TagIcon className="w-4 h-4" />
+                      Resell
+                    </Button>
+                  )}
+                </>
+              )}
+              {status === 'pending' && (
+                <div className="flex items-center gap-2 text-yellow-700 bg-yellow-50 border border-yellow-200 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-widest">
+                  <AlertCircle className="w-4 h-4" />
+                  Awaiting payment
+                </div>
+              )}
+              {status === 'used' && (
+                <Button disabled variant="outline" className="h-10 rounded-xl font-bold text-xs uppercase tracking-wider">
+                  Event Completed
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Content */}
-        <div className="flex-1 p-6 flex flex-col justify-between">
-          <div>
-            <div className="flex items-start justify-between mb-4">
-              <div>
-                <h3 className="text-xl font-bold">{booking.eventTitle}</h3>
-                <div className="flex gap-2 mt-2">
-                  <span
-                    className={`inline-block px-3 py-1 rounded-full text-xs font-semibold ${
-                      statusColors[booking.status]
-                    }`}
-                  >
-                    {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
-                  </span>
-                  {booking.isListed && (
-                    <span className="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-800 flex items-center gap-1">
-                      <TagIcon className="w-3 h-3" />
-                      Listed for Resale
-                    </span>
-                  )}
-                </div>
-              </div>
-            </div>
+        {/* Perforated Divider (Hidden on mobile, vertical on desktop) */}
+        <div className="hidden md:flex flex-col items-center justify-center relative bg-card border-l-2 border-dashed border-border/60">
+          <div className="absolute top-0 -mt-3 w-6 h-6 bg-background rounded-full border-b-2 border-border/50" />
+          <div className="absolute bottom-0 -mb-3 w-6 h-6 bg-background rounded-full border-t-2 border-border/50" />
+        </div>
+        
+        {/* Mobile Perforated Divider (Horizontal on mobile) */}
+        <div className="md:hidden flex items-center justify-center relative bg-card border-t-2 border-dashed border-border/60">
+          <div className="absolute left-0 -ml-3 w-6 h-6 bg-background rounded-full border-r-2 border-border/50" />
+          <div className="absolute right-0 -mr-3 w-6 h-6 bg-background rounded-full border-l-2 border-border/50" />
+        </div>
 
-            <div className="space-y-2 text-sm text-muted-foreground mb-4">
-              <div className="flex items-center gap-2">
-                <CalendarIcon className="w-4 h-4" />
-                <span>
-                  {formatDate(booking.eventDate)} at {booking.eventTime}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPinIcon className="w-4 h-4" />
-                <span>{booking.eventLocation}</span>
-              </div>
+        {/* Right Side: Stub & QR */}
+        <div className="md:w-64 bg-muted/30 p-6 flex flex-col items-center justify-center relative border-l border-border/10">
+          <div className="text-center w-full">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-4">Admit {booking.quantity}</p>
+            
+            <div className="bg-white p-4 rounded-2xl shadow-sm mx-auto mb-4 border border-border/50 hover:shadow-md transition-shadow">
+              <svg
+                viewBox="0 0 100 100"
+                className="w-full h-auto aspect-square max-w-[120px] mx-auto"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <rect width="100" height="100" fill="white" />
+                <rect x="10" y="10" width="30" height="30" fill="black" />
+                <rect x="60" y="10" width="30" height="30" fill="black" />
+                <rect x="10" y="60" width="30" height="30" fill="black" />
+                <rect x="45" y="45" width="10" height="10" fill="black" />
+                <rect x="20" y="20" width="10" height="10" fill="black" />
+                <rect x="70" y="20" width="10" height="10" fill="black" />
+                <rect x="20" y="70" width="10" height="10" fill="black" />
+                <rect x="40" y="10" width="10" height="10" fill="black" />
+                <rect x="80" y="60" width="10" height="10" fill="black" />
+                <rect x="60" y="80" width="10" height="10" fill="black" />
+                <rect x="80" y="80" width="10" height="10" fill="black" />
+              </svg>
             </div>
-
-            <div className="bg-muted p-3 rounded-lg text-sm mb-4">
-              <p className="text-muted-foreground">
-                {booking.quantity} ticket{booking.quantity !== 1 ? 's' : ''} × MWK {booking.price.toLocaleString()}
-              </p>
-              <p className="font-bold text-foreground">Total: MWK {booking.totalAmount.toLocaleString()}</p>
-            </div>
+            
+            <p className="text-xs font-mono font-bold text-foreground bg-muted py-1.5 px-3 rounded-lg border border-border/50">
+              {booking.id.split('-').pop()}
+            </p>
+            
+            <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground mt-4">
+              Scan at entrance
+            </p>
           </div>
-
-          {/* Actions */}
-          <div className="flex gap-3 flex-wrap">
-            {status === 'confirmed' && (
-              <>
-                <Button
-                  onClick={() => setShowQR(!showQR)}
-                  variant="outline"
-                  className="gap-2"
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><rect width="5" height="5" x="3" y="3" rx="1"/><rect width="5" height="5" x="16" y="3" rx="1"/><rect width="5" height="5" x="3" y="16" rx="1"/><path d="M21 16h-3a2 2 0 0 0-2 2v3"/><path d="M21 21v.01"/><path d="M12 7v3a2 2 0 0 1-2 2H7"/><path d="M3 12h.01"/><path d="M12 3h.01"/><path d="M12 16v.01"/><path d="M16 12h1"/><path d="M21 12v.01"/><path d="M12 21v-1"/></svg>
-                  {showQR ? 'Hide QR Code' : 'Show QR Code'}
-                </Button>
-                <Button variant="outline" className="gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-                  Download Tickets
-                </Button>
-                {!booking.isListed && isSoldOut && (
-                  <Button 
-                    onClick={() => setShowResaleDialog(true)}
-                    variant="secondary" 
-                    className="gap-2 bg-orange-600 hover:bg-orange-700 text-white border-none"
-                  >
-                    <TagIcon className="w-4 h-4" />
-                    Resell Ticket
-                  </Button>
-                )}
-              </>
-            )}
-            {status === 'pending' && (
-              <div className="flex items-center gap-2 text-yellow-700 bg-yellow-50 px-4 py-2 rounded-lg text-sm">
-                <AlertCircle className="w-4 h-4" />
-                Awaiting payment confirmation
-              </div>
-            )}
-            {status === 'used' && (
-              <Button disabled variant="outline">
-                Event Completed
-              </Button>
-            )}
-          </div>
-
-          {/* QR Code */}
-          {showQR && (
-            <div className="mt-6 pt-6 border-t border-border">
-              <div className="bg-muted p-6 rounded-lg text-center">
-                <div className="w-48 h-48 bg-white rounded-lg mx-auto mb-4 flex items-center justify-center">
-                  <svg
-                    viewBox="0 0 100 100"
-                    className="w-full h-full p-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <rect width="100" height="100" fill="white" />
-                    <rect x="10" y="10" width="30" height="30" fill="black" />
-                    <rect x="60" y="10" width="30" height="30" fill="black" />
-                    <rect x="10" y="60" width="30" height="30" fill="black" />
-                    <rect x="45" y="45" width="10" height="10" fill="black" />
-                    <text x="50" y="95" textAnchor="middle" fontSize="4" fill="black">
-                      QR Code
-                    </text>
-                  </svg>
-                </div>
-                <p className="text-sm text-muted-foreground">
-                  Show this code at the event entrance
-                </p>
-                <p className="text-xs text-muted-foreground mt-2">
-                  Order ID: {booking.id}
-                </p>
-              </div>
-            </div>
-          )}
         </div>
       </div>
 
       {resaleDialogModal}
-    </Card>
+    </div>
   );
 }

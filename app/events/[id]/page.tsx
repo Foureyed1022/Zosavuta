@@ -215,7 +215,30 @@ export default function EventDetailPage() {
               <div className="mb-6">
                 <p className="text-sm text-muted-foreground mb-2">Price per ticket</p>
                 <div className="text-4xl font-bold text-primary">
-                  MWK {event.price.toLocaleString()}
+                  MWK {unitPrice.toLocaleString()}
+                </div>
+              </div>
+
+              {/* Ticket Tier Selection */}
+              <div className="mb-6">
+                <Label className="text-sm font-medium mb-2 block">Ticket Tier</Label>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setTier('Regular')}
+                    className={`p-3 rounded-xl border text-left transition ${tier === 'Regular' ? 'border-primary bg-primary/10 font-bold text-primary' : 'border-border hover:bg-muted text-muted-foreground'}`}
+                  >
+                    <div className="text-xs font-bold uppercase tracking-wider">Regular</div>
+                    <div className="text-sm font-extrabold">MWK {event.price.toLocaleString()}</div>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setTier('VIP')}
+                    className={`p-3 rounded-xl border text-left transition ${tier === 'VIP' ? 'border-amber-500 bg-amber-500/10 font-bold text-amber-600 shadow-md shadow-amber-500/10' : 'border-border hover:bg-muted text-muted-foreground'}`}
+                  >
+                    <div className="text-xs font-bold uppercase tracking-wider text-amber-600 flex items-center gap-1">👑 VIP Pass</div>
+                    <div className="text-sm font-extrabold">MWK {(event.price * 2).toLocaleString()}</div>
+                  </button>
                 </div>
               </div>
 

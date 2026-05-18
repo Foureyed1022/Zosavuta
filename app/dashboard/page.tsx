@@ -184,39 +184,55 @@ export default function AttendeeDashboard() {
             ) : (
               <div className="space-y-4">
                 {upcomingBookings.map((booking) => (
-                  <Card key={booking.id} className="overflow-hidden border-none shadow-md hover:shadow-lg transition-shadow">
-                    <div className="flex flex-col sm:flex-row">
-                      <div className="sm:w-32 h-32 sm:h-auto overflow-hidden">
-                        <img 
-                          src={booking.eventImage} 
-                          alt={booking.eventTitle}
-                          className="w-full h-full object-cover" 
-                        />
-                      </div>
-                      <div className="flex-1 p-5">
-                        <div className="flex justify-between items-start mb-2">
-                          <div>
-                            <h3 className="font-bold text-lg">{booking.eventTitle}</h3>
-                            <div className="flex items-center gap-3 text-sm text-muted-foreground mt-1">
-                              <span className="flex items-center gap-1">
-                                <CalendarIcon className="w-3.5 h-3.5" />
-                                {new Date(booking.eventDate).toLocaleDateString()}
-                              </span>
-                              <span className="flex items-center gap-1">
-                                <MapPinIcon className="w-3.5 h-3.5" />
-                                {booking.eventLocation.split(',')[0]}
-                              </span>
-                            </div>
+                  <div key={booking.id} className="relative group transition-all duration-300 hover:-translate-y-1">
+                    <div className="flex flex-col sm:flex-row bg-card rounded-[20px] shadow-sm border border-border/50 overflow-hidden hover:shadow-lg group-hover:border-primary/20 transition-all">
+                      
+                      {/* Left: Image & Details */}
+                      <div className="flex-1 flex flex-row p-4 gap-4 relative">
+                        <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0">
+                          <img 
+                            src={booking.eventImage} 
+                            alt={booking.eventTitle}
+                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                          />
+                        </div>
+                        <div className="flex flex-col justify-center overflow-hidden">
+                          <h3 className="font-black text-lg uppercase tracking-tight leading-tight mb-1 truncate">{booking.eventTitle}</h3>
+                          <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
+                            <span className="flex items-center gap-1 shrink-0">
+                              <CalendarIcon className="w-3 h-3 text-primary" />
+                              {new Date(booking.eventDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                            </span>
+                            <span className="flex items-center gap-1 truncate">
+                              <MapPinIcon className="w-3 h-3 text-primary" />
+                              <span className="truncate">{booking.eventLocation.split(',')[0]}</span>
+                            </span>
                           </div>
-                          <Link href={`/my-bookings`}>
-                            <Button size="icon" variant="ghost" className="rounded-full">
-                              <QrCodeIcon className="w-5 h-5 text-primary" />
-                            </Button>
-                          </Link>
                         </div>
                       </div>
+
+                      {/* Perforated Divider */}
+                      <div className="hidden sm:flex flex-col items-center justify-center relative bg-card border-l-2 border-dashed border-border/60">
+                        <div className="absolute top-0 -mt-2 w-4 h-4 bg-background rounded-full border-b-2 border-border/50" />
+                        <div className="absolute bottom-0 -mb-2 w-4 h-4 bg-background rounded-full border-t-2 border-border/50" />
+                      </div>
+
+                      <div className="sm:hidden flex items-center justify-center relative bg-card border-t-2 border-dashed border-border/60">
+                        <div className="absolute left-0 -ml-2 w-4 h-4 bg-background rounded-full border-r-2 border-border/50" />
+                        <div className="absolute right-0 -mr-2 w-4 h-4 bg-background rounded-full border-l-2 border-border/50" />
+                      </div>
+
+                      {/* Right Stub: Action */}
+                      <div className="sm:w-28 bg-muted/30 p-4 flex flex-col items-center justify-center relative">
+                        <Link href={`/my-bookings`}>
+                          <Button size="icon" className="rounded-xl w-10 h-10 bg-primary/10 text-primary hover:bg-primary hover:text-primary-foreground shadow-sm group-hover:scale-110 transition-transform">
+                            <QrCodeIcon className="w-5 h-5" />
+                          </Button>
+                        </Link>
+                        <p className="text-[8px] font-black uppercase tracking-[0.2em] text-muted-foreground mt-2">View Ticket</p>
+                      </div>
                     </div>
-                  </Card>
+                  </div>
                 ))}
               </div>
             )}
