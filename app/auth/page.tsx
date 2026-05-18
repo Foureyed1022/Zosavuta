@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, Suspense } from 'react';
+import Image from 'next/image';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { AlertCircle, Eye, EyeOff, UserIcon, BriefcaseIcon } from 'lucide-react';
+import { AlertCircle, Eye, EyeOff, UserIcon, BriefcaseIcon, LogInIcon } from 'lucide-react';
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, updateProfile, GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
 import { auth, db } from '@/lib/firebase';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
@@ -287,23 +288,24 @@ function AuthContent() {
               </div>
             )}
 
-            {mode === 'signup' && (
-              <div className="space-y-3">
-                <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-muted-foreground">
-                  <span className="h-px flex-1 bg-border" />
-                  <span>or</span>
-                  <span className="h-px flex-1 bg-border" />
-                </div>
-                <Button
-                  type="button"
-                  onClick={signInWithGoogle}
-                  disabled={loading}
-                  className="w-full border border-border bg-background text-foreground hover:bg-muted/10"
-                >
-                  Continue with Google
-                </Button>
+            <div className="space-y-3">
+              <div className="flex items-center gap-2 text-xs uppercase tracking-[0.3em] text-muted-foreground">
+                <span className="h-px flex-1 bg-border" />
+                <span>or</span>
+                <span className="h-px flex-1 bg-border" />
               </div>
-            )}
+              <Button
+                type="button"
+                onClick={signInWithGoogle}
+                disabled={loading}
+                className="w-full border border-border bg-white text-foreground hover:bg-muted/10 shadow-sm"
+              >
+                <span className="inline-flex items-center justify-center gap-2">
+                  <Image src="/google.svg" alt="Google icon" width={18} height={18} />
+                  {mode === 'signin' ? 'Sign in with Google' : 'Sign up with Google'}
+                </span>
+              </Button>
+            </div>
 
             <Button
               type="submit"

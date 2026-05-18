@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
@@ -77,9 +78,9 @@ export default function Navigation() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-18 py-3">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="w-10 h-10 rounded-xl bg-primary flex items-center justify-center text-primary-foreground group-hover:rotate-6 transition-transform">
-              <TicketIcon className="w-6 h-6" />
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-primary/10 flex items-center justify-center">
+              <Image src="/zosavuta.png" alt="Zosavuta" fill className="object-cover" />
             </div>
             <div className="flex flex-col">
               <span className="font-black text-xl tracking-tighter text-foreground leading-none">ZOSAVUTA</span>
@@ -168,8 +169,8 @@ export default function Navigation() {
               <div className="flex flex-col h-full bg-background">
                 <SheetHeader className="p-6 border-b border-border/50 flex items-center justify-between space-y-0">
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-primary-foreground">
-                      <TicketIcon className="w-5 h-5" />
+                    <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-primary/10">
+                      <Image src="/zosavuta.png?v=2" alt="Zosavuta" fill className="object-cover" />
                     </div>
                     <SheetTitle className="font-black text-lg tracking-tighter">ZOSAVUTA</SheetTitle>
                     <SheetDescription className="sr-only">Mobile Navigation Menu</SheetDescription>
