@@ -15,8 +15,8 @@ export const metadata: Metadata = {
   description: 'Discover and book tickets for amazing events. Seamless ticketing with integrated bus transport across Africa.',
   generator: 'v0.app',
   icons: {
-    icon: '/zosavuta.png?v=2',
-    apple: '/zosavuta.png?v=2',
+    icon: '/zosavuta.png',
+    apple: '/zosavuta.png',
   },
 }
 

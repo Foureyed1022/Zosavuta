@@ -170,7 +170,7 @@ export default function Navigation() {
                 <SheetHeader className="p-6 border-b border-border/50 flex items-center justify-between space-y-0">
                   <div className="flex items-center gap-2">
                     <div className="relative w-8 h-8 rounded-lg overflow-hidden bg-primary/10">
-                      <Image src="/zosavuta.png?v=2" alt="Zosavuta" fill className="object-cover" />
+                      <Image src="/zosavuta.png" alt="Zosavuta" fill className="object-cover" />
                     </div>
                     <SheetTitle className="font-black text-lg tracking-tighter">ZOSAVUTA</SheetTitle>
                     <SheetDescription className="sr-only">Mobile Navigation Menu</SheetDescription>

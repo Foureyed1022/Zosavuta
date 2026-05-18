@@ -153,6 +153,9 @@ function AuthContent() {
       <Card className="w-full max-w-md">
         <div className="p-8">
           <div className="text-center mb-8">
+            <div className="mx-auto mb-3 w-14 h-14 relative">
+              <Image src="/zosavuta.png" alt="Zosavuta" fill className="object-contain" />
+            </div>
             <h1 className="text-3xl font-bold text-primary mb-2">Zosavuta</h1>
             <p className="text-muted-foreground">
               {mode === 'signin' ? 'Sign in to your account' : 'Create your account'}
