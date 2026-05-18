@@ -15,7 +15,7 @@ import {
   DollarSignIcon,
   LogOutIcon 
 } from 'lucide-react';
-import { collection, query, where, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
 import { DEMO_ANALYTICS } from '@/lib/mock-data';
@@ -35,6 +35,7 @@ export default function OrganizerDashboard() {
   const router = useRouter();
   const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
+  const [userRole, setUserRole] = useState<'customer' | 'organizer' | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [stats, setStats] = useState({
     totalEvents: 0,
@@ -48,6 +49,22 @@ export default function OrganizerDashboard() {
       router.push('/auth');
     }
   }, [user, authLoading, router]);
+
+  useEffect(() => {
+    const fetchUserRole = async () => {
+      if (!user) return;
+      try {
+        const roleDoc = await getDoc(doc(db, 'users', user.uid));
+        if (roleDoc.exists()) {
+          setUserRole(roleDoc.data().role as 'customer' | 'organizer');
+        }
+      } catch (error) {
+        console.warn('Unable to fetch user role for organizer dashboard.');
+      }
+    };
+
+    fetchUserRole();
+  }, [user]);
 
   useEffect(() => {
     const fetchEvents = async () => {
@@ -123,7 +140,12 @@ export default function OrganizerDashboard() {
             <h1 className="text-4xl font-bold tracking-tight">Muli bwanji, {user?.displayName?.split(' ')[0] || 'Organizer'}! 👋</h1>
             <p className="text-muted-foreground text-lg mt-2">Manage your events and track sales in MWK</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
+            <Link href="/dashboard">
+              <Button variant="outline" className="h-12 px-6 text-foreground hover:bg-muted/50">
+                Switch to Attendee Dashboard
+              </Button>
+            </Link>
             <Link href="/organizer">
               <Button className="bg-primary hover:bg-primary/90 h-12 px-6 gap-2">
                 <PlusIcon className="w-5 h-5" />

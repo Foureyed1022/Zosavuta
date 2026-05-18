@@ -16,7 +16,7 @@ import {
   BellIcon
 } from 'lucide-react';
 import { auth, db } from '@/lib/firebase';
-import { collection, query, where, getDocs, limit, orderBy } from 'firebase/firestore';
+import { collection, query, where, getDocs, doc, getDoc, limit, orderBy } from 'firebase/firestore';
 import { DEMO_BOOKINGS } from '@/lib/mock-data';
 
 interface Booking {
@@ -34,6 +34,7 @@ export default function AttendeeDashboard() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('Member');
+  const [userRole, setUserRole] = useState<'customer' | 'organizer' | null>(null);
   const [upcomingBookings, setUpcomingBookings] = useState<Booking[]>([]);
   const [stats, setStats] = useState({
     totalTickets: 0,
@@ -91,6 +92,25 @@ export default function AttendeeDashboard() {
     };
 
     fetchDashboardData();
+
+    const fetchUserRole = async () => {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      try {
+        const roleDoc = await getDoc(doc(db, 'users', user.uid));
+        if (roleDoc.exists()) {
+          setUserRole(roleDoc.data().role as 'customer' | 'organizer');
+        } else {
+          setUserRole('customer');
+        }
+      } catch (error) {
+        console.warn('Unable to fetch user role, defaulting to attendee.');
+        setUserRole('customer');
+      }
+    };
+
+    fetchUserRole();
   }, [router]);
 
   if (loading) {
@@ -111,7 +131,14 @@ export default function AttendeeDashboard() {
             <h1 className="text-4xl font-bold tracking-tight mb-2">Muli bwanji, {userName}! 👋</h1>
             <p className="text-muted-foreground text-lg">You have {stats.upcomingEvents} events coming up this month.</p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-wrap gap-3">
+            {userRole === 'organizer' && (
+              <Link href="/organizer/dashboard">
+                <Button variant="outline" className="h-12 px-6 text-foreground hover:bg-muted/50">
+                  Switch to Organizer Dashboard
+                </Button>
+              </Link>
+            )}
             <Link href="/events">
               <Button className="bg-primary hover:bg-primary/90 gap-2 h-12 px-6">
                 <TicketIcon className="w-5 h-5" />
