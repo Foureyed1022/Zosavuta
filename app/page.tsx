@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -30,15 +31,16 @@ interface Event {
 
 export default function HomePage() {
   const { user, loading: authLoading } = useAuth();
-  const [events, setEvents] = useState<Event[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [events, setEvents] = useState<Event[]>(DEMO_EVENTS);
+  const [filteredEvents, setFilteredEvents] = useState<Event[]>(DEMO_EVENTS);
+  const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('all');
   const [sortBy, setSortBy] = useState('upcoming');
 
   useEffect(() => {
     const fetchEvents = async () => {
+      setLoading(true);
       try {
         const q = query(collection(db, 'events'));
         const querySnapshot = await getDocs(q);
@@ -118,10 +120,13 @@ export default function HomePage() {
         <div className="absolute inset-0 z-0 opacity-40">
            <div className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/80 to-transparent" />
            {featuredEvents[0] && (
-             <img 
-               src={featuredEvents[0].image} 
-               alt="Hero Background" 
-               className="w-full h-full object-cover blur-sm scale-105"
+             <Image
+               src={featuredEvents[0].image}
+               alt="Hero Background"
+               fill
+               className="object-cover blur-sm scale-105"
+               sizes="100vw"
+               priority
              />
            )}
         </div>

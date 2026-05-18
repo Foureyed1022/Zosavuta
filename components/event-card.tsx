@@ -39,10 +39,12 @@ export default function EventCard({ event }: EventCardProps) {
         
         {/* Top Section: Artwork & Details */}
         <div className="relative h-48 overflow-hidden flex-shrink-0">
-          <img
+          <Image
             src={event.image}
             alt={event.title}
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            fill
+            sizes="(max-width: 768px) 100vw, 33vw"
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
           
