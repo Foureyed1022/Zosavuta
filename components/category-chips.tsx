@@ -50,10 +50,10 @@ export default function CategoryChips({ selectedCategory, onSelectCategory }: Ca
               key={cat.id}
               onClick={() => onSelectCategory(cat.id)}
               className={cn(
-                "flex items-center gap-2 px-4 py-2.5 rounded-full border text-sm font-medium transition-all whitespace-nowrap",
+                "flex items-center gap-2 px-3 py-2 rounded-full border text-[13px] font-semibold uppercase tracking-[0.04em] transition-all duration-200 whitespace-nowrap min-w-fit",
                 isSelected 
-                  ? "bg-primary text-primary-foreground border-primary shadow-md scale-105" 
-                  : "bg-card text-muted-foreground border-border hover:border-primary hover:text-primary"
+                  ? "bg-primary text-primary-foreground border-primary shadow-sm shadow-primary/20" 
+                  : "bg-card/90 text-muted-foreground border-border hover:bg-white/5 hover:text-foreground"
               )}
             >
               <Icon className={cn("w-4 h-4", isSelected ? "text-primary-foreground" : "text-muted-foreground group-hover:text-primary")} />

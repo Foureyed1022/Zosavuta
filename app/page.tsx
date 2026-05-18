@@ -369,7 +369,10 @@ export default function HomePage() {
       {/* 6. Newsletter / CTA Section */}
       <section className="py-16 md:py-24 bg-background">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="bg-primary rounded-[32px] p-8 md:p-16 relative overflow-hidden group">
+          <div className="relative overflow-hidden bg-primary rounded-[2rem] border border-white/10 shadow-2xl p-8 md:p-16 group">
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 -ml-5 w-10 h-10 rounded-full bg-background shadow-lg" />
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 -mr-5 w-10 h-10 rounded-full bg-background shadow-lg" />
+            <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 w-px border-r border-dashed border-white/20" />
             <div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-20 -mt-20 blur-3xl group-hover:scale-150 transition-transform duration-1000" />
             <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
               <div className="max-w-md text-center md:text-left">
