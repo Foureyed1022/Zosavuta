@@ -13,11 +13,14 @@ import {
   ChevronRightIcon,
   StarIcon,
   ClockIcon,
-  BellIcon
+  BellIcon,
+  TrophyIcon,
 } from 'lucide-react';
 import { auth, db } from '@/lib/firebase';
 import { collection, query, where, getDocs, doc, getDoc, limit, orderBy } from 'firebase/firestore';
 import { DEMO_BOOKINGS } from '@/lib/mock-data';
+import { useAuth } from '@/hooks/use-auth';
+import { calculateTotalPoints } from '@/lib/legacy-points';
 
 interface Booking {
   id: string;
@@ -28,10 +31,14 @@ interface Booking {
   eventImage: string;
   status: string;
   quantity: number;
+  totalAmount: number;
+  tier?: string;
+  busTransport?: boolean;
 }
 
 export default function AttendeeDashboard() {
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth();
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState('Member');
   const [userRole, setUserRole] = useState<'customer' | 'organizer' | null>(null);
@@ -39,18 +46,30 @@ export default function AttendeeDashboard() {
   const [stats, setStats] = useState({
     totalTickets: 0,
     upcomingEvents: 0,
-    loyaltyPoints: 1250,
+    legacyPoints: 0,
   });
 
+  const formatShortDate = (dateString: string) => {
+    const parts = dateString.split('-');
+    if (parts.length === 3) {
+      const monthIndex = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      return `${months[monthIndex]} ${day}`;
+    }
+    return dateString;
+  };
+
   useEffect(() => {
+    if (authLoading) return;
+
+    if (!user) {
+      router.push('/auth');
+      return;
+    }
+
     const fetchDashboardData = async () => {
       try {
-        const user = auth.currentUser;
-        if (!user) {
-          router.push('/auth');
-          return;
-        }
-
         setUserName(user.displayName?.split(' ')[0] || 'Member');
 
         // Fetch bookings from Firestore
@@ -73,14 +92,21 @@ export default function AttendeeDashboard() {
           setStats({
             totalTickets: DEMO_BOOKINGS.length,
             upcomingEvents: DEMO_BOOKINGS.filter(b => b.status === 'confirmed').length,
-            loyaltyPoints: 1250,
+            legacyPoints: calculateTotalPoints(DEMO_BOOKINGS),
           });
         } else {
           setUpcomingBookings(bookingsData);
           setStats({
             totalTickets: bookingsData.length,
             upcomingEvents: bookingsData.filter(b => b.status === 'confirmed').length,
-            loyaltyPoints: 1250 + (bookingsData.length * 50),
+            legacyPoints: calculateTotalPoints(
+              bookingsData.map((b, i) => ({
+                totalAmount: b.totalAmount ?? 0,
+                tier: b.tier,
+                busTransport: b.busTransport,
+                isFirstBooking: i === 0,
+              }))
+            ),
           });
         }
       } catch (error) {
@@ -91,12 +117,7 @@ export default function AttendeeDashboard() {
       }
     };
 
-    fetchDashboardData();
-
     const fetchUserRole = async () => {
-      const user = auth.currentUser;
-      if (!user) return;
-
       try {
         const roleDoc = await getDoc(doc(db, 'users', user.uid));
         if (roleDoc.exists()) {
@@ -110,10 +131,11 @@ export default function AttendeeDashboard() {
       }
     };
 
+    fetchDashboardData();
     fetchUserRole();
-  }, [router]);
+  }, [user, authLoading, router]);
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="max-w-6xl mx-auto px-4 py-12 flex justify-center items-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
@@ -162,17 +184,20 @@ export default function AttendeeDashboard() {
             </CardContent>
           </Card>
           
-          <Card className="bg-secondary/5 border-none shadow-none">
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary">
-                <StarIcon className="w-6 h-6" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground font-medium">Loyalty Points</p>
-                <h3 className="text-2xl font-bold">{stats.loyaltyPoints.toLocaleString()}</h3>
-              </div>
-            </CardContent>
-          </Card>
+          <Link href="/legacy-points" className="block">
+            <Card className="bg-secondary/5 border-none shadow-none hover:shadow-md transition-shadow cursor-pointer group">
+              <CardContent className="p-6 flex items-center gap-4">
+                <div className="w-12 h-12 rounded-2xl bg-secondary/10 flex items-center justify-center text-secondary group-hover:scale-110 transition-transform">
+                  <TrophyIcon className="w-6 h-6" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm text-muted-foreground font-medium">Legacy Points</p>
+                  <h3 className="text-2xl font-bold">{stats.legacyPoints.toLocaleString()}</h3>
+                  <p className="text-xs text-primary font-semibold mt-0.5">View rewards →</p>
+                </div>
+              </CardContent>
+            </Card>
+          </Link>
 
           <Card className="bg-accent/5 border-none shadow-none">
             <CardContent className="p-6 flex items-center gap-4">
@@ -228,7 +253,7 @@ export default function AttendeeDashboard() {
                           <div className="flex items-center gap-3 text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
                             <span className="flex items-center gap-1 shrink-0">
                               <CalendarIcon className="w-3 h-3 text-primary" />
-                              {new Date(booking.eventDate).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                              {formatShortDate(booking.eventDate)}
                             </span>
                             <span className="flex items-center gap-1 truncate">
                               <MapPinIcon className="w-3 h-3 text-primary" />

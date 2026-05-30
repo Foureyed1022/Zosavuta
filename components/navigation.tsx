@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from '@/components/ui/sheet';
-import { MenuIcon, TicketIcon, LogOutIcon, ChevronRight } from 'lucide-react';
+import { MenuIcon, TicketIcon, LogOutIcon, ChevronRight, TrophyIcon } from 'lucide-react';
 import { ModeToggle } from '@/components/mode-toggle';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
@@ -114,6 +114,11 @@ export default function Navigation() {
                     My Tickets
                   </Button>
                 </Link>
+                <Link href="/legacy-points">
+                  <Button variant="ghost" size="sm" className="font-bold uppercase tracking-tighter text-xs hover:bg-primary/5 hover:text-primary flex items-center gap-1">
+                    <TrophyIcon className="w-3 h-3" /> Points
+                  </Button>
+                </Link>
                 
                 {userRole === 'organizer' ? (
                   <div className="flex items-center gap-2">
@@ -214,6 +219,12 @@ export default function Navigation() {
                           <Button variant="outline" className="w-full h-14 rounded-2xl font-bold uppercase tracking-widest text-sm justify-between px-6">
                             My Tickets
                             <TicketIcon className="w-5 h-5 text-primary" />
+                          </Button>
+                        </Link>
+                        <Link href="/legacy-points" className="block" onClick={() => setIsOpen(false)}>
+                          <Button variant="outline" className="w-full h-14 rounded-2xl font-bold uppercase tracking-widest text-sm justify-between px-6 border-violet-500/20 hover:bg-violet-50 dark:hover:bg-violet-950/20">
+                            Legacy Points
+                            <TrophyIcon className="w-5 h-5 text-violet-600" />
                           </Button>
                         </Link>
                         

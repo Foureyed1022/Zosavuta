@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -33,6 +33,11 @@ const ticketSalesData = [
 ];
 
 export default function AdminDashboard() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   return (
     <>
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
@@ -89,22 +94,28 @@ export default function AdminDashboard() {
           <TabsContent value="revenue" className="mt-6 space-y-6">
             <Card className="p-6">
               <h3 className="font-bold mb-4">Revenue Trend</h3>
-              <ResponsiveContainer width="100%" height={350}>
-                <LineChart data={revenueData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-                  <XAxis dataKey="date" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="revenue"
-                    stroke="var(--color-primary)"
-                    strokeWidth={2}
-                    dot={{ fill: 'var(--color-primary)', r: 4 }}
-                  />
-                </LineChart>
-              </ResponsiveContainer>
+              {mounted ? (
+                <ResponsiveContainer width="100%" height={350}>
+                  <LineChart data={revenueData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                    <XAxis dataKey="date" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Line
+                      type="monotone"
+                      dataKey="revenue"
+                      stroke="var(--color-primary)"
+                      strokeWidth={2}
+                      dot={{ fill: 'var(--color-primary)', r: 4 }}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-[350px] w-full bg-muted/50 animate-pulse rounded-lg flex items-center justify-center text-muted-foreground text-sm font-medium">
+                  Loading charts...
+                </div>
+              )}
             </Card>
           </TabsContent>
 
@@ -113,25 +124,31 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="p-6">
                 <h3 className="font-bold mb-4">Events by Category</h3>
-                <ResponsiveContainer width="100%" height={300}>
-                  <PieChart>
-                    <Pie
-                      data={eventCategoryData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, value }) => `${name}: ${value}`}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {eventCategoryData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
+                {mounted ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={eventCategoryData}
+                        cx="50%"
+                        cy="50%"
+                        labelLine={false}
+                        label={({ name, value }) => `${name}: ${value}`}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="value"
+                      >
+                        {eventCategoryData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <div className="h-[300px] w-full bg-muted/50 animate-pulse rounded-lg flex items-center justify-center text-muted-foreground text-sm font-medium">
+                    Loading charts...
+                  </div>
+                )}
               </Card>
 
               <Card className="p-6">
@@ -162,17 +179,23 @@ export default function AdminDashboard() {
           <TabsContent value="tickets" className="mt-6 space-y-6">
             <Card className="p-6">
               <h3 className="font-bold mb-4">Ticket Sales by Category</h3>
-              <ResponsiveContainer width="100%" height={350}>
-                <BarChart data={ticketSalesData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
-                  <XAxis dataKey="category" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="sold" fill="var(--color-primary)" />
-                  <Bar dataKey="available" fill="var(--color-muted)" />
-                </BarChart>
-              </ResponsiveContainer>
+              {mounted ? (
+                <ResponsiveContainer width="100%" height={350}>
+                  <BarChart data={ticketSalesData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" />
+                    <XAxis dataKey="category" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar dataKey="sold" fill="var(--color-primary)" />
+                    <Bar dataKey="available" fill="var(--color-muted)" />
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div className="h-[350px] w-full bg-muted/50 animate-pulse rounded-lg flex items-center justify-center text-muted-foreground text-sm font-medium">
+                  Loading charts...
+                </div>
+              )}
             </Card>
           </TabsContent>
         </Tabs>

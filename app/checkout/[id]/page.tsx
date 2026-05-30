@@ -8,11 +8,17 @@ import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Field, FieldLabel } from '@/components/ui/field';
-import { ChevronLeftIcon, ShieldCheckIcon } from 'lucide-react';
-import { doc, getDoc } from 'firebase/firestore';
+import { ChevronLeftIcon, ShieldCheckIcon, TrophyIcon, CheckCircleIcon } from 'lucide-react';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import { db, auth } from '@/lib/firebase';
-import { DEMO_EVENTS } from '@/lib/mock-data';
+import { DEMO_EVENTS, DEMO_BOOKINGS } from '@/lib/mock-data';
 import { useAuth } from '@/hooks/use-auth';
+import {
+  calculateTotalPoints,
+  maxRedeemablePoints,
+  pointsToMwk,
+  POINTS_CONFIG,
+} from '@/lib/legacy-points';
 
 interface Event {
   id: string;
@@ -41,6 +47,9 @@ function CheckoutContent() {
   const [loading, setLoading] = useState(false);
   const [event, setEvent] = useState<Event | null>(null);
   const [fetchingEvent, setFetchingEvent] = useState(true);
+  const [availablePoints, setAvailablePoints] = useState(0);
+  const [usePoints, setUsePoints] = useState(false);
+  const [pointsToRedeem, setPointsToRedeem] = useState(0);
 
   useEffect(() => {
     const fetchEvent = async () => {
@@ -65,6 +74,24 @@ function CheckoutContent() {
     };
     fetchEvent();
   }, [eventId]);
+
+  // Fetch legacy points for the current user
+  useEffect(() => {
+    if (!user) return;
+    const fetchPoints = async () => {
+      try {
+        const q = query(collection(db, 'orders'), where('userId', '==', user.uid));
+        const snap = await getDocs(q);
+        const bookings: any[] = [];
+        snap.forEach((d) => bookings.push(d.data()));
+        const pts = calculateTotalPoints(bookings.length > 0 ? bookings : DEMO_BOOKINGS);
+        setAvailablePoints(pts);
+      } catch {
+        setAvailablePoints(calculateTotalPoints(DEMO_BOOKINGS));
+      }
+    };
+    fetchPoints();
+  }, [user]);
 
   // Form state
   const [attendeeInfo, setAttendeeInfo] = useState({
@@ -130,7 +157,11 @@ function CheckoutContent() {
   const unitPrice = tier === 'VIP' ? basePrice * 2 : basePrice;
   const totalPrice = unitPrice * qty;
   const transportCost = transport === 'round-trip' ? 1500 * qty : 0;
-  const finalPrice = totalPrice + transportCost;
+  const processingFee = 500;
+  const subtotalBeforeDiscount = totalPrice + transportCost + processingFee;
+  const maxPoints = maxRedeemablePoints(subtotalBeforeDiscount, availablePoints);
+  const pointsDiscount = usePoints ? pointsToMwk(Math.min(pointsToRedeem, maxPoints)) : 0;
+  const finalPrice = Math.max(0, subtotalBeforeDiscount - pointsDiscount);
 
   return (
     <>
@@ -286,6 +317,63 @@ function CheckoutContent() {
                     </Field>
                   </div>
 
+                  {/* Legacy Points Redemption */}
+                  {availablePoints >= POINTS_CONFIG.minRedemption && (
+                    <div className={`rounded-xl border-2 p-4 transition-all ${
+                      usePoints ? 'border-primary bg-primary/5' : 'border-border'
+                    }`}>
+                      <div className="flex items-start gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-violet-100 dark:bg-violet-900/30 flex items-center justify-center flex-shrink-0">
+                          <TrophyIcon className="w-5 h-5 text-violet-600" />
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between">
+                            <p className="font-bold text-sm">Use Legacy Points</p>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setUsePoints(!usePoints);
+                                if (!usePoints) setPointsToRedeem(Math.min(maxPoints, availablePoints));
+                                else setPointsToRedeem(0);
+                              }}
+                              className={`relative w-10 h-5 rounded-full transition-colors ${
+                                usePoints ? 'bg-primary' : 'bg-muted-foreground/30'
+                              }`}
+                            >
+                              <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${
+                                usePoints ? 'translate-x-5' : 'translate-x-0'
+                              }`} />
+                            </button>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-0.5">
+                            You have <span className="font-bold text-foreground">{availablePoints.toLocaleString()} pts</span> available
+                          </p>
+                          {usePoints && (
+                            <div className="mt-3 space-y-2">
+                              <div className="flex items-center gap-3">
+                                <input
+                                  type="range"
+                                  min={POINTS_CONFIG.minRedemption}
+                                  max={maxPoints}
+                                  step={100}
+                                  value={pointsToRedeem}
+                                  onChange={(e) => setPointsToRedeem(Number(e.target.value))}
+                                  className="flex-1 accent-primary"
+                                />
+                                <span className="text-sm font-bold w-20 text-right">
+                                  {pointsToRedeem.toLocaleString()} pts
+                                </span>
+                              </div>
+                              <p className="text-xs text-green-600 font-semibold">
+                                = MWK {pointsToMwk(pointsToRedeem).toLocaleString()} discount
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="flex gap-4">
                     <Button
                       type="button"
@@ -376,11 +464,19 @@ function CheckoutContent() {
                   <span className="text-muted-foreground">Processing Fee</span>
                   <span>MWK 500</span>
                 </div>
+                {usePoints && pointsDiscount > 0 && (
+                  <div className="flex justify-between text-sm text-green-600 font-semibold">
+                    <span className="flex items-center gap-1">
+                      <TrophyIcon className="w-3 h-3" /> Legacy Points
+                    </span>
+                    <span>-MWK {pointsDiscount.toLocaleString()}</span>
+                  </div>
+                )}
               </div>
 
               <div className="flex justify-between font-bold text-lg mt-4">
                 <span>Total</span>
-                <span className="text-primary">MWK {(finalPrice + 500).toLocaleString()}</span>
+                <span className="text-primary">MWK {finalPrice.toLocaleString()}</span>
               </div>
 
               <div className="mt-6 p-4 bg-background rounded-lg flex gap-3">

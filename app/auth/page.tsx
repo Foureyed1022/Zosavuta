@@ -52,10 +52,12 @@ function AuthContent() {
         });
       }
 
+      const userRole = userDoc.exists() ? userDoc.data().role : role;
+
       if (redirectPath) {
         router.push(redirectPath);
       } else {
-        router.push(role === 'organizer' ? '/organizer/dashboard' : '/dashboard');
+        router.push(userRole === 'organizer' ? '/organizer/dashboard' : '/dashboard');
       }
     } catch (err: any) {
       if (err.code === 'auth/popup-closed-by-user') {

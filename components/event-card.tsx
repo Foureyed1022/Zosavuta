@@ -24,6 +24,16 @@ interface EventCardProps {
 
 export default function EventCard({ event }: EventCardProps) {
   const formatDate = (dateString: string) => {
+    const parts = dateString.split('-');
+    if (parts.length === 3) {
+      const monthIndex = parseInt(parts[1], 10) - 1;
+      const day = parseInt(parts[2], 10);
+      const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+      return {
+        month: months[monthIndex] || '',
+        day
+      };
+    }
     const date = new Date(dateString);
     const month = date.toLocaleDateString('en-US', { month: 'short' }).toUpperCase();
     const day = date.getDate();
