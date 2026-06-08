@@ -19,6 +19,7 @@ import {
 import { auth, db } from '@/lib/firebase';
 import { collection, query, where, getDocs, doc, getDoc, limit, orderBy } from 'firebase/firestore';
 import { DEMO_BOOKINGS } from '@/lib/mock-data';
+import { getBookingsByUser as getBusBookingsByUser } from '@/lib/bus/firebase';
 import { useAuth } from '@/hooks/use-auth';
 import { calculateTotalPoints } from '@/lib/legacy-points';
 
@@ -86,7 +87,31 @@ export default function AttendeeDashboard() {
           bookingsData.push({ id: doc.id, ...doc.data() } as Booking);
         });
 
-        if (bookingsData.length === 0) {
+        // Also fetch bus bookings for this user and merge them into the dashboard
+        let busBookings: any[] = [];
+        try {
+          busBookings = await getBusBookingsByUser(user.uid);
+        } catch (e) {
+          console.warn('Failed to fetch bus bookings for dashboard', e);
+        }
+
+        // Normalize bus bookings into the same Booking shape used by the dashboard
+        const normalizedBusBookings: Booking[] = busBookings.map((b: any) => ({
+          id: b.id,
+          eventTitle: `Bus: ${b.tripId}`,
+          eventDate: b.createdAt ? new Date(b.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
+          eventTime: '',
+          eventLocation: '',
+          eventImage: '/zosavuta.png',
+          status: b.status ?? 'confirmed',
+          quantity: b.seats ?? b.seatNumbers?.length ?? 1,
+          totalAmount: b.totalPrice ?? b.totalPrice ?? 0,
+          busTransport: true,
+        }));
+
+        const combined = [...bookingsData, ...normalizedBusBookings];
+
+        if (combined.length === 0) {
           // Use demo data if no real data exists
           setUpcomingBookings(DEMO_BOOKINGS.slice(0, 3));
           setStats({
@@ -95,15 +120,16 @@ export default function AttendeeDashboard() {
             legacyPoints: calculateTotalPoints(DEMO_BOOKINGS),
           });
         } else {
-          setUpcomingBookings(bookingsData);
+          setUpcomingBookings(combined.slice(0, 3));
+          const totalTicketsCount = combined.reduce((acc, cur) => acc + (cur.quantity ?? 1), 0);
           setStats({
-            totalTickets: bookingsData.length,
-            upcomingEvents: bookingsData.filter(b => b.status === 'confirmed').length,
+            totalTickets: totalTicketsCount,
+            upcomingEvents: combined.filter(b => b.status === 'confirmed').length,
             legacyPoints: calculateTotalPoints(
-              bookingsData.map((b, i) => ({
+              combined.map((b, i) => ({
                 totalAmount: b.totalAmount ?? 0,
                 tier: b.tier,
-                busTransport: b.busTransport,
+                busTransport: (b as any).busTransport,
                 isFirstBooking: i === 0,
               }))
             ),
@@ -296,6 +322,18 @@ export default function AttendeeDashboard() {
               <h2 className="text-2xl font-bold tracking-tight mb-6">Notifications</h2>
               <Card className="border-none shadow-sm">
                 <CardContent className="p-0">
+                  {upcomingBookings.filter(b => (b as any).busTransport).map((b) => (
+                    <div key={`bus-${b.id}`} className="p-4 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer flex gap-4">
+                      <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
+                        <BellIcon className="w-5 h-5 text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-semibold">Your bus booking {b.id} is confirmed.</p>
+                        <p className="text-xs text-muted-foreground mt-1">Recently</p>
+                      </div>
+                    </div>
+                  ))}
+
                   <div className="p-4 border-b border-border hover:bg-muted/50 transition-colors cursor-pointer flex gap-4">
                     <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0">
                       <BellIcon className="w-5 h-5 text-blue-600" />

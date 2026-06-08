@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
-import { ThemeProvider } from '@/components/theme-provider'
+
+import ThemeWrapper from '@/components/theme-wrapper';
 import Navigation from '@/components/navigation'
 import Footer from '@/components/footer'
 import { ScrollToTop } from '@/components/scroll-to-top'
@@ -13,7 +14,7 @@ const _geistMono = Geist_Mono({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: 'Zosavuta - Your Gateway to Events',
   description: 'Discover and book tickets for amazing events. Seamless ticketing with integrated bus transport across Africa.',
-  generator: 'v0.app',
+  generator: 'Zosavuta',
   icons: {
     icon: '/zosavuta.png',
     apple: '/zosavuta.png',
@@ -28,12 +29,6 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full" suppressHydrationWarning>
       <body className="font-sans antialiased h-full">
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
           <div className="flex flex-col min-h-full">
             <Navigation />
             <main className="flex-grow">
@@ -41,9 +36,6 @@ export default function RootLayout({
             </main>
             <Footer />
           </div>
-          <ScrollToTop />
-          {process.env.NODE_ENV === 'production' && <Analytics />}
-        </ThemeProvider>
       </body>
     </html>
   )

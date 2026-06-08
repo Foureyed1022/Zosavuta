@@ -1,297 +1,137 @@
-# Zosavuta - Event Ticketing Platform
-
-A modern, full-featured event ticketing system built with Next.js, React, and Firebase. Designed for African markets with integrated bus transport, organizer dashboards, and seamless payment processing.
-
-[📖 Full Documentation](./README_ZOSAVUTA.md) | [⚡ Quick Start (5 min)](./QUICKSTART.md) | [✨ Features](./FEATURES.md) | [🏗️ Architecture](./ZOSAVUTA_SUMMARY.md)
-
-## Features
-
-### For Event Attendees
-- 🎫 Browse and search events across all categories
-- 🔍 Filter by category, date, and location
-- 💳 Seamless 3-step checkout process
-- 🚌 Optional integrated bus transport
-- 📱 Download and manage tickets
-- 🎟️ QR code display for venue entry
-- 💬 24/7 customer support with FAQ
-
-### For Event Organizers
-- ✏️ Create and manage events easily
-- 📊 Real-time analytics dashboard
-- 💰 Track revenue and ticket sales
-- 📈 Charts and performance metrics
-- 👥 Monitor attendees and bookings
-
-### For Platform Admins
-- 📊 Platform-wide analytics
-- 💵 Revenue and performance tracking
-- 🎪 Event category distribution
-- 📈 Sales trends and insights
-- 👥 User and ticket metrics
-
-## Tech Stack
-
-- **Frontend**: Next.js 15 + React 19 + TypeScript
-- **Styling**: Tailwind CSS with custom Navy + Orange theme
-- **Database**: Firebase Firestore
-- **Auth**: Firebase Authentication
-- **Payments**: PayChangu (mock integration)
-- **UI**: shadcn/ui (50+ components) + Recharts
-- **Icons**: Lucide React
-
-## Quick Start
-
-### 1. Prerequisites
-- Node.js 18+
-- Firebase account (free)
-- Code editor
-
-### 2. Setup Firebase (2 min)
-
-1. Create a project at [Firebase Console](https://console.firebase.google.com/)
-2. Copy your Firebase credentials
-3. Create `.env.local` file:
-
-```env
-NEXT_PUBLIC_FIREBASE_API_KEY=your_api_key
-NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=your_domain
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=your_project_id
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your_bucket
-NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
-```
-
-### 3. Install & Run (1 min)
-
-```bash
-# Install dependencies
-pnpm install
-
-# Start development server
-pnpm dev
-```
-
-Visit **http://localhost:3000** ✨
-
-## Try It Out
-
-### As a Customer
-1. Click "Browse Events" 
-2. Select any event
-3. Choose quantity and options
-4. Complete mock checkout
-5. View your ticket with QR code
-
-### As an Organizer
-1. Click "Create Event"
-2. Fill in event details
-3. Set pricing and capacity
-4. View your dashboard at `/organizer/dashboard`
-
-### As Admin
-Visit `/admin` to see platform analytics
-
-## Demo Data
-
-The app includes **6 sample events** across Africa:
-- Afrobeats Music Festival (Nairobi)
-- Tech Innovation Summit (Kampala)
-- Football Championship (Lagos)
-- Comedy Night (Addis Ababa)
-- Web Development Workshop (Dar es Salaam)
-- Food Festival (Kigali)
-
-Plus **3 sample bookings** for testing the bookings interface.
-
-## Project Structure
-
-```
-zosavuta/
-├── app/                    # Next.js pages
-│   ├── events/            # Event discovery
-│   ├── checkout/          # Payment flow
-│   ├── organizer/         # Event creation & dashboard
-│   ├── admin/             # Platform analytics
-│   ├── auth/              # Authentication
-│   ├── my-bookings/       # User tickets
-│   ├── support/           # Help & FAQ
-│   └── page.tsx           # Homepage
-├── components/            # React components
-│   ├── navigation.tsx
-│   ├── event-card.tsx
-│   └── ui/               # shadcn/ui components
-├── lib/
-│   ├── firebase.ts       # Firebase config
-│   └── utils.ts          # Utilities
-└── public/               # Static assets
-```
-
-## Key Routes
-
-| Route | Purpose |
-|-------|---------|
-| `/` | Homepage |
-| `/events` | Event listing |
-| `/events/[id]` | Event details & booking |
-| `/auth` | Sign in/up |
-| `/checkout/[id]` | Payment checkout |
-| `/my-bookings` | Your tickets |
-| `/organizer` | Create event |
-| `/organizer/dashboard` | Organizer analytics |
-| `/admin` | Admin dashboard |
-| `/support` | Help & FAQ |
-
-## Documentation
-
-- **[README_ZOSAVUTA.md](./README_ZOSAVUTA.md)** - Complete setup and feature guide
-- **[QUICKSTART.md](./QUICKSTART.md)** - Get running in 5 minutes
-- **[FEATURES.md](./FEATURES.md)** - Detailed feature list
-- **[ZOSAVUTA_SUMMARY.md](./ZOSAVUTA_SUMMARY.md)** - Architecture & implementation
-- **[BUILD_SUMMARY.txt](./BUILD_SUMMARY.txt)** - Build overview
-
-## Customization
-
-### Change Colors
-Edit `/app/globals.css` and look for `--primary` and `--secondary` variables:
-
-```css
---primary: oklch(0.25 0.08 250);      /* Navy Blue */
---secondary: oklch(0.58 0.22 33);     /* Orange */
-```
-
-### Add Your Events
-1. Use `/organizer` to create events, or
-2. Add directly to Firestore `events` collection
-
-### Customize Theme
-Edit `tailwind.config.ts` and `globals.css` to match your branding
-
-## Production Checklist
-
-- [ ] Configure Firestore security rules
-- [ ] Integrate PayChangu real payments
-- [ ] Setup email notifications
-- [ ] Configure SMS for confirmations
-- [ ] Deploy to Vercel
-- [ ] Setup custom domain
-- [ ] Add analytics tracking
-- [ ] Configure error monitoring
-
-## Deployment
-
-### To Vercel (Recommended)
-
-```bash
-# Push to GitHub
-git push origin main
-
-# Deploy to Vercel (automatic or manual)
-vercel --prod
-```
-
-Add environment variables in Vercel project settings.
-
-## Next Steps
-
-1. **Setup Firebase** - Configure auth and database
-2. **Integrate Payments** - Add real PayChangu API
-3. **Add Notifications** - Setup email and SMS
-4. **Deploy** - Push to production
-5. **Monitor** - Add analytics and error tracking
-
-## Security
-
-- ✅ Firebase Authentication
-- ✅ Environment variables for secrets
-- ✅ Input validation on all forms
-- ✅ HTTPS ready for production
-- ✅ SQL injection protection via ORM
-- ✅ CORS configuration ready
-
-## Performance
-
-- ✅ Next.js App Router optimization
-- ✅ Image optimization
-- ✅ Code splitting
-- ✅ Lazy loading
-- ✅ Caching strategies
-
-## Browser Support
-
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-- Mobile browsers (iOS 14+, Android 10+)
-
-## Accessibility
-
-- WCAG 2.1 AA compliant
-- Semantic HTML
-- Keyboard navigation
-- Screen reader friendly
-- High color contrast
-
-## File Size
-
-- Bundle size: ~150KB (gzipped)
-- Demo data: Included
-- Images: Optimized with Next.js
-
-## License
-
-Proprietary - Zosavuta
-
-## Support
-
-- 📧 Email: support@zosavuta.com
-- 📱 Phone: +254 700 000 000
-- 💬 WhatsApp: +254 700 000 000
-
-## Roadmap
-
-### Q2 2026
-- [x] Complete ticketing system
-- [ ] Live PayChangu integration
-- [ ] Email notifications
-
-### Q3 2026
-- [ ] Mobile app (React Native)
-- [ ] QR code scanning
-- [ ] Advanced seat selection
-
-### Q4 2026
-- [ ] AI recommendations
-- [ ] Social features
-- [ ] Affiliate program
-
-## Contributing
-
-To contribute:
-1. Create a feature branch
-2. Make your changes
-3. Test thoroughly
-4. Submit a pull request
-
-## Acknowledgments
-
-Built with:
-- [Next.js](https://nextjs.org/)
-- [React](https://react.dev/)
-- [Firebase](https://firebase.google.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [shadcn/ui](https://ui.shadcn.com/)
-- [Recharts](https://recharts.org/)
-- [Lucide Icons](https://lucide.dev/)
+*** Begin README replacement ***
+
+# Zosavuta — Ticketing & Bus Platform
+
+Zosavuta is a unified ticketing platform for events and intercity bus transport across Africa. This repository contains the Next.js frontend, mock data, and helper libraries used during local development.
+
+**Contents**
+- Project overview
+- Features
+- Tech stack
+- Directory structure (key files)
+- Getting started (dev + build)
+- Mock data & bus module
+- Bus operator tools (validation, manifest)
+- Developer workflows
+- Troubleshooting
+- Contribution guide
 
 ---
 
-<div align="center">
+## Project Overview
+Zosavuta combines event ticketing and bus ticketing into a single experience. Users can browse events, purchase tickets, and optionally book bus transport. Operators manage buses, routes, trips, and validate tickets.
 
-**Ready to revolutionize event ticketing in Africa?**
+## Features
+- Event ticket browsing and purchasing
+- Integrated bus booking (routes, trips, seats)
+- Operator dashboard (buses, trips, bookings, manifest)
+- Ticket validation (QR scanning via device camera)
+- Offline/mock development via local mock data and localStorage fallbacks
 
-[⚡ Get Started](./QUICKSTART.md) | [📖 Read Docs](./README_ZOSAVUTA.md) | [✨ View Features](./FEATURES.md)
+## Tech Stack
+- Next.js 16 (App Router)
+- React 19
+- TypeScript
+- Tailwind CSS
+- Firebase (Firestore) — optional in local dev (mock fallbacks present)
 
-**Zosavuta - Making events accessible to everyone**
+## Important Files & Folders
+- App entry & layout: [app/layout.tsx](app/layout.tsx)
+- Global styles: [app/globals.css](app/globals.css)
+- Bus mock data: [lib/bus/mock-data.ts](lib/bus/mock-data.ts)
+- Bus types: [lib/bus/types.ts](lib/bus/types.ts)
+- Bus helper library (Firestore + mock fallbacks): [lib/bus/firebase.ts](lib/bus/firebase.ts)
+- Bus listing page: [app/bus/page.tsx](app/bus/page.tsx)
+- Bus route detail: [app/bus/route/[id]/page.tsx](app/bus/route/[id]/page.tsx)
+- Operator validation (camera scanner): [app/bus/operator/validation/page.tsx](app/bus/operator/validation/page.tsx)
+- Dashboard: [app/dashboard/page.tsx](app/dashboard/page.tsx)
+- My bookings: [app/my-bookings/page.tsx](app/my-bookings/page.tsx)
 
-</div>
+## Getting Started (Local Development)
+Prerequisites:
+- Node.js (recommended LTS)
+- pnpm (if you use pnpm) or npm/yarn
+
+Install dependencies:
+
+```bash
+pnpm install
+```
+
+Run development server:
+
+```bash
+pnpm dev
+```
+
+Build for production:
+
+```bash
+pnpm build
+pnpm start
+```
+
+TypeScript checks:
+
+```bash
+pnpm exec tsc --noEmit
+```
+
+## Environment & Firebase
+This project uses Firebase for production data. For local development the app includes robust mock data and localStorage fallbacks. If you want to enable Firestore integration, provide Firebase config in `lib/firebase.ts` and set up appropriate security rules.
+
+## Mock Data & Bus Module
+- Mock datasets for buses, routes, trips, bookings, and tickets live at [lib/bus/mock-data.ts](lib/bus/mock-data.ts).
+- Helper functions that attempt Firestore access, then fall back to mock/localStorage are in [lib/bus/firebase.ts](lib/bus/firebase.ts).
+- Mock data keys are stored in localStorage under names like `zosavuta_buses`, `zosavuta_trips`, `zosavuta_bookings`, `zosavuta_tickets` so you can edit them in the browser devtools to simulate different states.
+
+### Common mock constants
+- `MOCK_ROUTES`, `MOCK_TRIPS`, `MOCK_BOOKINGS`, `MOCK_TICKETS` — used across operator and customer pages.
+
+## Bus Pages & Operator Tools
+- Bus landing (route cards): [app/bus/page.tsx](app/bus/page.tsx)
+- Route detail with fallback: [app/bus/route/[id]/page.tsx](app/bus/route/[id]/page.tsx) — uses `generateStaticParams()` for mock routes in dev
+- Operator layout & nav: [app/bus/operator/layout.tsx](app/bus/operator/layout.tsx)
+- Operator validation: [app/bus/operator/validation/page.tsx](app/bus/operator/validation/page.tsx)
+	- Supports camera QR scanning via the Web Barcode Detector API, falling back to manual input
+	- Uses `MOCK_TICKETS` for local validation when Firestore is unavailable
+- Operator manifest & bookings management use the helper functions in `lib/bus/firebase.ts` and `MOCK_*` datasets during local dev
+
+## Dashboard Integration
+- User dashboard originally read event `orders`; bus bookings lived separately. The dashboard now merges event `orders` and bus `bookings` (from `lib/bus/firebase.ts`) so `Total Tickets`, `Upcoming Tickets`, and Notifications include bus bookings.
+- See implementation: [app/dashboard/page.tsx](app/dashboard/page.tsx)
+
+## Tickets & Validation
+- Tickets are represented by `lib/bus/types.ts` (`Ticket` interface).
+- Validation endpoint/helpers are available in [lib/bus/firebase.ts](lib/bus/firebase.ts) including `validateTicket`, `getTicketsByUser`, and listeners like `onTicketValidationChange`.
+- The operator validation page uses camera scanning to read ticket QR codes (uses `BarcodeDetector` when available) and validates against the mock dataset in local dev.
+
+## Developer Workflows
+- To add a new route/trip/bus locally, edit `lib/bus/mock-data.ts` or use the localStorage keys in the browser.
+- To add real Firestore data, create collections `buses`, `routes`, `trips`, `bookings`, `tickets`, and ensure security rules permit your dev credentials.
+
+### Useful commands
+- Start dev server: `pnpm dev`
+- Run TypeScript checks: `pnpm exec tsc --noEmit`
+- Build production: `pnpm build`
+
+## Troubleshooting
+- `@import` CSS warnings: ensure `@import` rules are at the top of the stylesheet files. The app uses [app/globals.css](app/globals.css) — avoid duplicate top-level CSS files with `@import` statements.
+- If pages 404 for routes like `/bus/route/route1`, ensure `generateStaticParams()` in [app/bus/route/[id]/page.tsx](app/bus/route/[id]/page.tsx) includes mock route ids or Firestore is available.
+- If Firestore returns `permission-denied` in builds, use mock data or update Firebase rules for the dev project.
+
+## Contribution
+- Fork the repository, create a feature branch, make changes, run tests and build locally, then open a PR with a clear description.
+- Keep mock-data changes small and include sample data for reproducible testing.
+
+## Contact
+- Project maintainers: the Zosavuta team
+
+---
+
+If you want, I can also:
+- Add a short `CONTRIBUTING.md` with PR checklist
+- Add Code of Conduct and issue templates
+- Generate a smaller `README-DEV.md` focused only on local debug steps
+
+*** End README replacement ***

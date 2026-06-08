@@ -45,7 +45,7 @@ export default function HomePage() {
         const q = query(collection(db, 'events'));
         const querySnapshot = await getDocs(q);
         const eventsData: Event[] = [];
-        
+
         querySnapshot.forEach((doc) => {
           eventsData.push({
             id: doc.id,
@@ -118,17 +118,17 @@ export default function HomePage() {
       <section className="relative h-[500px] flex items-center overflow-hidden bg-foreground">
         {/* Background Pattern/Overlay */}
         <div className="absolute inset-0 z-0 opacity-40">
-           <div className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/80 to-transparent" />
-           {featuredEvents[0] && (
-             <Image
-               src={featuredEvents[0].image}
-               alt="Hero Background"
-               fill
-               className="object-cover blur-sm scale-105"
-               sizes="100vw"
-               priority
-             />
-           )}
+          <div className="absolute inset-0 bg-gradient-to-r from-foreground via-foreground/80 to-transparent" />
+          {featuredEvents[0] && (
+            <Image
+              src={featuredEvents[0].image}
+              alt="Hero Background"
+              fill
+              className="object-cover blur-sm scale-105"
+              sizes="100vw"
+              priority
+            />
+          )}
         </div>
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
@@ -172,11 +172,11 @@ export default function HomePage() {
       <section id="explore" className="sticky top-[72px] z-40 bg-background/80 backdrop-blur-xl border-b border-border/50 py-4 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-            <CategoryChips 
-              selectedCategory={categoryFilter} 
-              onSelectCategory={setCategoryFilter} 
+            <CategoryChips
+              selectedCategory={categoryFilter}
+              onSelectCategory={setCategoryFilter}
             />
-            
+
             <div className="flex items-center gap-3">
               <div className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-full">
                 <FilterIcon className="w-4 h-4 text-primary" />
@@ -211,9 +211,9 @@ export default function HomePage() {
               <div className="text-6xl mb-6">🎫</div>
               <h2 className="text-2xl font-black mb-2 uppercase tracking-tight">No events matching your vibe</h2>
               <p className="text-muted-foreground max-w-sm mx-auto">Try adjusting your filters or search terms to discover more.</p>
-              <Button 
-                variant="outline" 
-                onClick={() => {setSearchTerm(''); setCategoryFilter('all');}}
+              <Button
+                variant="outline"
+                onClick={() => { setSearchTerm(''); setCategoryFilter('all'); }}
                 className="mt-8 rounded-full px-8 border-primary text-primary font-bold hover:bg-primary/5"
               >
                 Clear all filters
@@ -230,7 +230,7 @@ export default function HomePage() {
                       <h2 className="text-4xl font-black tracking-tighter uppercase">Featured <span className="text-primary">Events</span></h2>
                     </div>
                     <div className="hidden md:flex gap-2">
-                       <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest italic">Top picks for you</p>
+                      <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest italic">Top picks for you</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -359,8 +359,8 @@ export default function HomePage() {
             />
             <FeatureCard
               icon={<BusIcon className="w-8 h-8" />}
-              title="Transport Included"
-              description="Skip the hassle. We arrange buses to take you to and from events"
+              title="Bus Ticketing"
+              description="Book electronic bus tickets independently – no event ties, just fast, reliable travel."
             />
             <FeatureCard
               icon={<ShieldCheckIcon className="w-8 h-8" />}
@@ -391,9 +391,9 @@ export default function HomePage() {
               </div>
               <div className="flex w-full md:w-auto items-center gap-3">
                 <div className="flex-1 md:w-80">
-                  <input 
-                    type="email" 
-                    placeholder="Enter your email" 
+                  <input
+                    type="email"
+                    placeholder="Enter your email"
                     className="w-full h-14 bg-white/10 border border-white/20 rounded-2xl px-6 text-white placeholder:text-white/40 focus:outline-none focus:ring-2 focus:ring-white/20"
                   />
                 </div>

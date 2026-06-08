@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { AlertCircle, CalendarIcon, MapPinIcon, Crown, Sparkles, ShieldCheck, User, Star, TagIcon, InfoIcon, TicketIcon } from 'lucide-react';
+import { AlertCircle, CalendarIcon, MapPinIcon, TagIcon, InfoIcon, TicketIcon, BusIcon, ArrowRightIcon, ArmchairIcon, ClockIcon } from 'lucide-react';
 import { DEMO_BOOKINGS, DEMO_EVENTS } from '@/lib/mock-data';
 import { useAuth } from '@/hooks/use-auth';
 import { 
@@ -20,9 +20,10 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/components/ui/use-toast';
-import { doc, updateDoc, setDoc, collection, serverTimestamp, getDoc } from 'firebase/firestore';
+import { doc, getDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { QRCodeSVG } from 'qrcode.react';
+import { MOCK_BOOKINGS, MOCK_TRIPS, MOCK_ROUTES, MOCK_BUSES } from '@/lib/bus/mock-data';
 
 interface Booking {
   id: string;
@@ -93,6 +94,10 @@ export default function MyBookingsPage() {
             <TabsTrigger value="confirmed">Confirmed ({confirmedBookings.length})</TabsTrigger>
             <TabsTrigger value="pending">Pending ({pendingBookings.length})</TabsTrigger>
             <TabsTrigger value="used">Used ({usedBookings.length})</TabsTrigger>
+            <TabsTrigger value="bus" className="flex items-center gap-1.5">
+              <BusIcon className="w-3.5 h-3.5" />
+              Bus Tickets ({MOCK_BOOKINGS.length})
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="confirmed" className="mt-6 space-y-6">
@@ -141,6 +146,24 @@ export default function MyBookingsPage() {
                 <BookingCard key={booking.id} booking={booking} status="used" />
               ))
             )}
+          </TabsContent>
+
+          {/* ── Bus Tickets Tab ── */}
+          <TabsContent value="bus" className="mt-6 space-y-6">
+            {MOCK_BOOKINGS.map((busBooking) => {
+              const trip = MOCK_TRIPS.find((t) => t.id === busBooking.tripId);
+              const route = trip ? MOCK_ROUTES.find((r) => r.id === trip.routeId) : undefined;
+              const bus = trip ? MOCK_BUSES.find((b) => b.id === trip.busId) : undefined;
+              return (
+                <BusTicketCard
+                  key={busBooking.id}
+                  booking={busBooking}
+                  trip={trip}
+                  route={route}
+                  bus={bus}
+                />
+              );
+            })}
           </TabsContent>
         </Tabs>
       </div>
@@ -620,6 +643,215 @@ function BookingCard({
       </div>
 
       {resaleDialogModal}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════
+   BUS TICKET CARD  —  boarding-pass style
+═══════════════════════════════════════════════════════ */
+
+import type { Booking as BusBooking, Trip, Route, Bus } from '@/lib/bus/types';
+
+function BusTicketCard({
+  booking,
+  trip,
+  route,
+  bus,
+}: {
+  booking: BusBooking;
+  trip?: Trip;
+  route?: Route;
+  bus?: Bus;
+}) {
+  const [expanded, setExpanded] = useState(false);
+
+  const fmt = (d: Date) =>
+    new Date(d).toLocaleString('en-MW', {
+      weekday: 'short',
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+
+  const fmtTime = (d: Date) =>
+    new Date(d).toLocaleTimeString('en-MW', { hour: '2-digit', minute: '2-digit' });
+
+  const fmtDate = (d: Date) =>
+    new Date(d).toLocaleDateString('en-MW', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' });
+
+  const statusColor =
+    booking.status === 'confirmed'
+      ? 'bg-emerald-500/15 text-emerald-700 border-emerald-500/30'
+      : booking.status === 'cancelled'
+      ? 'bg-red-500/15 text-red-700 border-red-500/30'
+      : 'bg-amber-500/15 text-amber-700 border-amber-500/30';
+
+  return (
+    <div className="relative group my-4">
+      {/* ── Outer shell ── */}
+      <div className="flex flex-col md:flex-row rounded-[24px] overflow-hidden border border-border/50 shadow-lg hover:shadow-xl transition-all duration-300 bg-card">
+
+        {/* ════ LEFT PANEL ════ */}
+        <div className="flex-1 relative">
+          {/* Gradient header band */}
+          <div className="h-2 w-full bg-gradient-to-r from-teal-500 via-cyan-500 to-indigo-500" />
+
+          <div className="p-6">
+            {/* Top row: operator + status */}
+            <div className="flex items-start justify-between mb-5">
+              <div className="flex items-center gap-2">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-500 to-indigo-500 flex items-center justify-center shadow">
+                  <BusIcon className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Bus Ticket</p>
+                  <p className="text-sm font-black text-foreground leading-none">
+                    {bus?.model ?? 'Coach Service'}
+                  </p>
+                </div>
+              </div>
+              <span className={`text-[10px] font-bold uppercase tracking-widest px-2.5 py-1 rounded-full border ${statusColor}`}>
+                {booking.status}
+              </span>
+            </div>
+
+            {/* ── Route: origin → destination ── */}
+            <div className="flex items-center gap-3 mb-6">
+              <div className="text-center min-w-[80px]">
+                <p className="text-2xl font-black text-foreground leading-none">
+                  {route?.origin?.slice(0, 3).toUpperCase() ?? 'ORG'}
+                </p>
+                <p className="text-xs text-muted-foreground font-medium mt-0.5 truncate max-w-[90px]">
+                  {route?.origin ?? '—'}
+                </p>
+              </div>
+
+              <div className="flex-1 flex flex-col items-center gap-1">
+                <div className="flex items-center gap-1 w-full">
+                  <div className="h-px flex-1 bg-border" />
+                  <div className="w-2 h-2 rounded-full bg-teal-500" />
+                  <div className="h-px flex-1 border-t border-dashed border-border" />
+                  <ArrowRightIcon className="w-4 h-4 text-teal-500 shrink-0" />
+                  <div className="h-px flex-1 border-t border-dashed border-border" />
+                  <div className="w-2 h-2 rounded-full bg-indigo-500" />
+                  <div className="h-px flex-1 bg-border" />
+                </div>
+                {route?.distanceKm && (
+                  <p className="text-[10px] text-muted-foreground font-medium">{route.distanceKm} km</p>
+                )}
+              </div>
+
+              <div className="text-center min-w-[80px]">
+                <p className="text-2xl font-black text-foreground leading-none">
+                  {route?.destination?.slice(0, 3).toUpperCase() ?? 'DST'}
+                </p>
+                <p className="text-xs text-muted-foreground font-medium mt-0.5 truncate max-w-[90px]">
+                  {route?.destination ?? '—'}
+                </p>
+              </div>
+            </div>
+
+            {/* ── Times grid ── */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-5">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70 mb-1">Departure</p>
+                <div className="flex items-center gap-1 text-foreground font-bold text-sm">
+                  <ClockIcon className="w-3.5 h-3.5 text-teal-500 shrink-0" />
+                  {trip ? fmtTime(trip.departureTime) : '—'}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-0.5">
+                  {trip ? fmtDate(trip.departureTime) : ''}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70 mb-1">Arrival</p>
+                <div className="flex items-center gap-1 text-foreground font-bold text-sm">
+                  <ClockIcon className="w-3.5 h-3.5 text-indigo-500 shrink-0" />
+                  {trip ? fmtTime(trip.arrivalTime) : '—'}
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-0.5">
+                  {trip ? fmtDate(trip.arrivalTime) : ''}
+                </p>
+              </div>
+
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70 mb-1">Seat(s)</p>
+                <div className="flex items-center gap-1 text-foreground font-bold text-sm">
+                  <ArmchairIcon className="w-3.5 h-3.5 text-teal-500 shrink-0" />
+                  {booking.seatNumbers?.join(', ') ?? `${booking.seats} seats`}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/70 mb-1">Fare</p>
+                <p className="text-foreground font-black text-sm text-teal-600">
+                  MWK {booking.totalPrice.toLocaleString()}
+                </p>
+              </div>
+            </div>
+
+            {/* ── Info pills ── */}
+            <div className="flex flex-wrap gap-2">
+              {bus?.licensePlate && (
+                <span className="flex items-center gap-1.5 bg-muted/60 border border-border/50 rounded-lg px-3 py-1 text-xs font-semibold text-foreground">
+                  🚌 {bus.licensePlate}
+                </span>
+              )}
+              {bus?.amenities?.map((a) => (
+                <span key={a} className="bg-teal-500/10 border border-teal-500/20 text-teal-700 rounded-lg px-2.5 py-1 text-xs font-semibold">
+                  {a}
+                </span>
+              ))}
+              {trip?.status && (
+                <span className="bg-indigo-500/10 border border-indigo-500/20 text-indigo-700 rounded-lg px-2.5 py-1 text-xs font-semibold">
+                  {trip.status}
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* ════ PERFORATED DIVIDER ════ */}
+        <div className="hidden md:flex flex-col items-center justify-center relative bg-card border-l-2 border-dashed border-border/50 w-0">
+          <div className="absolute top-0 -mt-3 w-6 h-6 bg-background rounded-full border-b-2 border-border/40" />
+          <div className="absolute bottom-0 -mb-3 w-6 h-6 bg-background rounded-full border-t-2 border-border/40" />
+        </div>
+        <div className="md:hidden h-0 relative border-t-2 border-dashed border-border/50">
+          <div className="absolute left-0 -ml-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-background rounded-full border-r-2 border-border/40" />
+          <div className="absolute right-0 -mr-3 top-1/2 -translate-y-1/2 w-6 h-6 bg-background rounded-full border-l-2 border-border/40" />
+        </div>
+
+        {/* ════ RIGHT STUB ════ */}
+        <div className="md:w-56 bg-gradient-to-b from-teal-500/5 to-indigo-500/5 p-6 flex flex-col items-center justify-center gap-4">
+          {/* QR Code */}
+          <div className="bg-white p-3 rounded-2xl shadow-sm border border-border/50">
+            <QRCodeSVG
+              value={`https://zosavuta.com/verify-bus/${booking.id}`}
+              size={100}
+              bgColor="#ffffff"
+              fgColor="#0f172a"
+              level="Q"
+              includeMargin={false}
+            />
+          </div>
+
+          {/* Reference */}
+          <div className="text-center">
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground mb-1">Booking Ref</p>
+            <p className="font-mono font-black text-sm text-foreground bg-muted px-3 py-1 rounded-lg border border-border/50">
+              {booking.bookingReference ?? booking.id.split('-').pop()?.toUpperCase()}
+            </p>
+          </div>
+
+          <p className="text-[9px] font-bold uppercase tracking-[0.2em] text-teal-600 text-center">
+            Show at boarding
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
